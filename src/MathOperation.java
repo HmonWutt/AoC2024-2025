@@ -53,8 +53,15 @@ public class MathOperation {
         int index = 0;
         while (!fixedWidths.isEmpty()) {
             int fixedWidth =  fixedWidths.removeFirst();
+            System.out.println("Fiexed width: "+fixedWidth);
             for (int i = 0; i < array.length-1; i++){
+                if (i <array.length-2){
                 eachNumber = array[i].substring(index, index + fixedWidth-1);
+                }
+                else{
+                    eachNumber = array[i].substring(index, index+fixedWidth);
+                }
+                System.out.println("Each numer: "+eachNumber);
                 rows.add(eachNumber);
             }
             index+=fixedWidth;
@@ -90,6 +97,7 @@ public class MathOperation {
         ArrayList<ArrayList<String>> eachNumberInColumn = new ArrayList<>();
         for (int i = 0; i < numbersByColumn.size(); i++){
             String[] row = numbersByColumn.get(i).toArray(new String[0]);
+            for (String each: row)System.out.println("Row: "+ each);
             ArrayList<String> rows = new ArrayList<>();
             for (int j = 0; j < row.length; j++){
 
@@ -101,7 +109,7 @@ public class MathOperation {
 
                 }
                 rows.add(numberInEachColumn.toString());
-                System.out.println(rows);
+//                System.out.println(rows);
             }
             eachNumberInColumn.add(rows);
         }
