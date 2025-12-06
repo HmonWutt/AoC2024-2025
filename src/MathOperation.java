@@ -1,5 +1,7 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class MathOperation {
     private static long sum(long a, long b){
@@ -23,15 +25,26 @@ public class MathOperation {
             List<String> row = matrix.getRow(i);
             String operator = row.getLast();
             long result = Long.parseLong(row.getFirst());
-//            System.out.println("start: "+result);
             for (int j = 1; j < row.size()-1;j++) {
                 long currentNum = Long.parseLong(row.get(j));
-//                System.out.println("Secon num "+currentNum);
                 result = doOperation(operator, currentNum, result);
-//                System.out.println("result" + result);
             }
             total+=result;
         }
         return total;
     }
+
+
+    static public ArrayList<Integer>  getFixedWidth(String[] array){
+        ArrayList<Integer> fixedWidths = new ArrayList<>();
+        Pattern pattern = Pattern.compile("\\*\\s+|\\+\\s+");
+        for (String each: array){
+            Matcher matcher = pattern.matcher(each);
+            while (matcher.find()) fixedWidths.add(matcher.group().length()-1);
+        }
+        return fixedWidths;
+    }
+
+
+
 }
