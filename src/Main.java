@@ -271,8 +271,8 @@ public class Main {
 //        String addZerosBehind = addZerosInfront.replaceAll("\\d(?=\\s+)", "0");
 //        System.out.println(addZerosBehind);
         String[] split = daySixAsString.split("\\n");
-        MathOperation.splitStringsUsingFixedWidth(split);
-//        for (String each: split) System.out.println(each);
+        MathOperation.calculateTwo(split);
+        for (String each: split) System.out.println("."+each+".");
 //        System.out.println(newMatrix.data);
 
 //        System.out.println(matrix.data);

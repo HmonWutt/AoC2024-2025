@@ -49,7 +49,7 @@ public class MathOperation {
         ArrayList<Integer> fixedWidths = MathOperation.getFixedWidth(array[array.length-1]);
         ArrayList<String> rows = new ArrayList<>();
         String eachNumber = "";
-        ArrayList<ArrayList<String>> matrix = new ArrayList<>();
+        ArrayList<ArrayList<String>> numbersByColumn = new ArrayList<>();
         int index = 0;
         while (!fixedWidths.isEmpty()) {
             int fixedWidth =  fixedWidths.removeFirst();
@@ -58,14 +58,55 @@ public class MathOperation {
                 rows.add(eachNumber);
             }
             index+=fixedWidth;
-            matrix.add(rows);
+            numbersByColumn.add(rows);
             rows = new ArrayList<>();
 
         }
-        return matrix;
+        return numbersByColumn;
 
     }
 
+    private static String extractOperators(String string){
+        int index = 0;
+        StringBuilder operators = new StringBuilder();
+        while (index < string.length()){
+            if (string.charAt(index)=='*' || string.charAt(index)=='+'){
+                operators.append(string.charAt(index));
+                index+=1;
+
+            }
+        }
+        return operators.toString();
+
+    }
+
+    private static String replaceSpaceWithZeros(String string){
+        return string.replaceAll(" ","0");
+    }
+
+    public  static void calculateTwo(String[] array){
+        ArrayList<ArrayList<String>> numbersByColumn = MathOperation.splitStringsUsingFixedWidth(array);
+//        String operators = MathOperation.extractOperators(array[array.length-1]);
+        ArrayList<ArrayList<String>> eachNumberInColumn = new ArrayList<>();
+        for (int i = 0; i < numbersByColumn.size(); i++){
+            String[] row = numbersByColumn.get(i).toArray(new String[0]);
+            ArrayList<String> rows = new ArrayList<>();
+            for (int j = 0; j < row.length; j++){
+
+                StringBuilder numberInEachColumn = new StringBuilder();
+                for (String each: row){
+                    if (each.charAt(j)!=' '){
+                        numberInEachColumn.append(each.charAt(j)) ;
+                    }
+
+                }
+                rows.add(numberInEachColumn.toString());
+                System.out.println(rows);
+            }
+            eachNumberInColumn.add(rows);
+        }
+        System.out.println(eachNumberInColumn);
+    }
 
 
 }
