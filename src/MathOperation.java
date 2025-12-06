@@ -35,14 +35,35 @@ public class MathOperation {
     }
 
 
-    static public ArrayList<Integer>  getFixedWidth(String[] array){
+    static public ArrayList<Integer>  getFixedWidth(String string){
         ArrayList<Integer> fixedWidths = new ArrayList<>();
         Pattern pattern = Pattern.compile("\\*\\s+|\\+\\s+");
-        for (String each: array){
-            Matcher matcher = pattern.matcher(each);
-            while (matcher.find()) fixedWidths.add(matcher.group().length()-1);
+        Matcher matcher = pattern.matcher(string);
+        while (matcher.find()){
+            fixedWidths.add(matcher.group().length());
         }
         return fixedWidths;
+    }
+
+    public static ArrayList<ArrayList<String>> splitStringsUsingFixedWidth(String[] array){
+        ArrayList<Integer> fixedWidths = MathOperation.getFixedWidth(array[array.length-1]);
+        ArrayList<String> rows = new ArrayList<>();
+        String eachNumber = "";
+        ArrayList<ArrayList<String>> matrix = new ArrayList<>();
+        int index = 0;
+        while (!fixedWidths.isEmpty()) {
+            int fixedWidth =  fixedWidths.removeFirst();
+            for (int i = 0; i < array.length-1; i++){
+                eachNumber = array[i].substring(index, index + fixedWidth-1);
+                rows.add(eachNumber);
+            }
+            index+=fixedWidth;
+            matrix.add(rows);
+            rows = new ArrayList<>();
+
+        }
+        return matrix;
+
     }
 
 

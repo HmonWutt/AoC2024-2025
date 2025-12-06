@@ -265,12 +265,20 @@ public class Main {
 
         inputDownloader.downloadInput("https://adventofcode.com/2025/day/6/input", "061225");
         ArrayList<String> daySix = scanner.loadAsArray("061225");
-        Matrix matrix = Matrix.makeMatrix(daySix);
+        Matrix matrix = Matrix.makeMatrix(daySix, "\\s+");
+        String daySixAsString = scanner.keepLineBreaks("test6");
+//        String addZerosInfront = daySixAsString.replaceAll(" +(?=\\d)", "0");
+//        String addZerosBehind = addZerosInfront.replaceAll("\\d(?=\\s+)", "0");
+//        System.out.println(addZerosBehind);
+        String[] split = daySixAsString.split("\\n");
+        MathOperation.splitStringsUsingFixedWidth(split);
+//        for (String each: split) System.out.println(each);
+//        System.out.println(newMatrix.data);
 
 //        System.out.println(matrix.data);
         Matrix transposedMatrix = matrix.transpose();
-        long result = MathOperation.calculate(transposedMatrix);
-        System.out.println(result);
+//        long result = MathOperation.calculate(transposedMatrix);
+//        System.out.println(result);
 
     }
 //    public static int run(int gridLen, int old_count){
