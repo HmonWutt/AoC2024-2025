@@ -253,15 +253,24 @@ public class Main {
 //        }
 //        System.out.println(finalCount);
 
-        inputDownloader.downloadInput("https://adventofcode.com/2025/day/5/input", "051225");
-        String dayFive = scanner.keepLineBreaks("051225");
-        String[] splits = dayFive.split("\\R\\s*\\R");
-
-        Ingredients ranges = new Ingredients(splits[0]);
-        Ingredients.makeHeap();
+//        inputDownloader.downloadInput("https://adventofcode.com/2025/day/5/input", "051225");
+//        String dayFive = scanner.keepLineBreaks("051225");
+//        String[] splits = dayFive.split("\\R\\s*\\R");
+//
+//        Ingredients ranges = new Ingredients(splits[0]);
+//        Ingredients.makeHeap();
 //        Ingredients.loopOver(Ingredients.ranges);
 //        int count = ranges.run(splits[1]);
 //        System.out.println(count);
+
+        inputDownloader.downloadInput("https://adventofcode.com/2025/day/6/input", "061225");
+        ArrayList<String> daySix = scanner.loadAsArray("061225");
+        Matrix matrix = Matrix.makeMatrix(daySix);
+
+//        System.out.println(matrix.data);
+        Matrix transposedMatrix = matrix.transpose();
+        long result = MathOperation.calculate(transposedMatrix);
+        System.out.println(result);
 
     }
 //    public static int run(int gridLen, int old_count){
