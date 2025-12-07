@@ -270,11 +270,16 @@ public class Main {
 //        String addZerosInfront = daySixAsString.replaceAll(" +(?=\\d)", "0");
 //        String addZerosBehind = addZerosInfront.replaceAll("\\d(?=\\s+)", "0");
 //        System.out.println(addZerosBehind);
-        String[] split = daySixAsString.split("\\n");
-        MathOperation.calculateTwo(split);
-        System.out.println(split[0].length());
-//        for (String each: split) System.out.println(each);
+//        String[] split = daySixAsString.split("\\n");
+//        MathOperation.calculateTwo(split);
+//        System.out.println(split[0].length());
 //        System.out.println(newMatrix.data);
+
+        inputDownloader.downloadInput("https://adventofcode.com/2025/day/7/input", "071225");
+        ArrayList<String> daySeven = scanner.loadAsArray("071225");
+        Beam beam = new Beam(daySeven);
+        int splittersCount = beam.getSplitterCount();
+        System.out.println(splittersCount);
 
 //        System.out.println(matrix.data);
 //        Matrix transposedMatrix = matrix.transpose();
