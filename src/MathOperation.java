@@ -1,35 +1,37 @@
+import javax.swing.*;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class MathOperation {
-    private static long sum(long a, long b){
-        return a+b;
+    private static BigInteger sum(BigInteger a, BigInteger b){
+        return a.add(b);
     }
 
-    private static long multiply(long a, long b){
-        return a*b;
+    private static BigInteger multiply(BigInteger a, BigInteger b){
+        return a.multiply(b);
     }
 
-    private static long doOperation(String operator, long a, long b){
+    private static BigInteger doOperation (String operator, BigInteger a, BigInteger b){
         if (operator.equals("*")){
             return multiply(a, b);
         }
         else return sum(a,b);
     }
 
-    public static long calculate(Matrix matrix){
-        long total = 0l;
+    public static BigInteger calculate(Matrix matrix){
+        BigInteger total = new BigInteger("0");
         for (int i=0; i < matrix.getRowLength(); i++){
             List<String> row = matrix.getRow(i);
             String operator = row.getLast();
-            long result = Long.parseLong(row.getFirst());
+            BigInteger result = new BigInteger(row.getFirst());
             for (int j = 1; j < row.size()-1;j++) {
-                long currentNum = Long.parseLong(row.get(j));
+                BigInteger currentNum = new BigInteger(row.get(j));
                 result = doOperation(operator, currentNum, result);
             }
-            total+=result;
+            total.add(result);
         }
         return total;
     }
@@ -51,17 +53,16 @@ public class MathOperation {
         String eachNumber = "";
         ArrayList<ArrayList<String>> numbersByColumn = new ArrayList<>();
         int index = 0;
+        System.out.println(fixedWidths.size()+","+array.length);
         while (!fixedWidths.isEmpty()) {
             int fixedWidth =  fixedWidths.removeFirst();
-            System.out.println("Fiexed width: "+fixedWidth);
             for (int i = 0; i < array.length-1; i++){
-                if (i <array.length-2){
-                eachNumber = array[i].substring(index, index + fixedWidth-1);
+                if (fixedWidths.size() ==0){
+                    eachNumber = array[i].substring(index);
                 }
                 else{
-                    eachNumber = array[i].substring(index, index+fixedWidth);
+                    eachNumber = array[i].substring(index, index + fixedWidth-1);
                 }
-                System.out.println("Each numer: "+eachNumber);
                 rows.add(eachNumber);
             }
             index+=fixedWidth;
@@ -74,13 +75,10 @@ public class MathOperation {
     }
 
     private static String extractOperators(String string){
-        int index = 0;
         StringBuilder operators = new StringBuilder();
-        while (index < string.length()){
-            if (string.charAt(index)=='*' || string.charAt(index)=='+'){
-                operators.append(string.charAt(index));
-                index+=1;
-
+        for (int i = 0; i < string.length(); i++){
+            if (string.charAt(i)=='*' || string.charAt(i)=='+'){
+                operators.append(string.charAt(i));
             }
         }
         return operators.toString();
@@ -93,27 +91,47 @@ public class MathOperation {
 
     public  static void calculateTwo(String[] array){
         ArrayList<ArrayList<String>> numbersByColumn = MathOperation.splitStringsUsingFixedWidth(array);
-//        String operators = MathOperation.extractOperators(array[array.length-1]);
         ArrayList<ArrayList<String>> eachNumberInColumn = new ArrayList<>();
         for (int i = 0; i < numbersByColumn.size(); i++){
+
             String[] row = numbersByColumn.get(i).toArray(new String[0]);
-            for (String each: row)System.out.println("Row: "+ each);
             ArrayList<String> rows = new ArrayList<>();
-            for (int j = 0; j < row.length; j++){
-
-                StringBuilder numberInEachColumn = new StringBuilder();
-                for (String each: row){
-                    if (each.charAt(j)!=' '){
-                        numberInEachColumn.append(each.charAt(j)) ;
+            for (int j = 0; j < row.length; j++) {
+                    StringBuilder numberInEachColumn = new StringBuilder();
+                    for (String each : row) {
+                        try {
+                            if (each.charAt(j) != ' ') {
+                                numberInEachColumn.append(each.charAt(j));
+                            }
+                        } catch (Exception e) {
+                            ;
+                        }
                     }
-
-                }
-                rows.add(numberInEachColumn.toString());
+                    if (!numberInEachColumn.isEmpty()) {
+                        rows.add(numberInEachColumn.toString());
+                    }
 //                System.out.println(rows);
-            }
+                }
             eachNumberInColumn.add(rows);
         }
-        System.out.println(eachNumberInColumn);
+//        System.out.println(eachNumberInColumn);
+        MathOperation.getCalculation(eachNumberInColumn,array[array.length-1]);
+    }
+
+    public static void getCalculation (ArrayList<ArrayList<String>> numbersByCol, String lastRow){
+        String operators = MathOperation.extractOperators(lastRow);
+        BigInteger total= new BigInteger("0");
+        for (int i = 0; i < operators.length();i++){
+            ArrayList<String> numbers = numbersByCol.get(i);
+            BigInteger first = new BigInteger(numbers.getFirst());
+            String operator = String.valueOf(operators.charAt(i));
+            for (int j = 1; j < numbers.size(); j++){
+                    first = MathOperation.doOperation(operator, first, new BigInteger(numbers.get(j)));
+            }
+            total = total.add(first);
+
+        }
+        System.out.println("Total: "+ total);
     }
 
 

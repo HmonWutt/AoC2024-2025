@@ -263,20 +263,21 @@ public class Main {
 //        int count = ranges.run(splits[1]);
 //        System.out.println(count);
 
-        inputDownloader.downloadInput("https://adventofcode.com/2025/day/6/input", "061225");
-        ArrayList<String> daySix = scanner.loadAsArray("061225");
-        Matrix matrix = Matrix.makeMatrix(daySix, "\\s+");
-        String daySixAsString = scanner.keepLineBreaks("test6");
+//        inputDownloader.downloadInput("https://adventofcode.com/2025/day/6/input", "061225");
+//        ArrayList<String> daySix = scanner.loadAsArray("061225");
+//        Matrix matrix = Matrix.makeMatrix(daySix, "\\s+");
+        String daySixAsString = scanner.keepLineBreaks("061225");
 //        String addZerosInfront = daySixAsString.replaceAll(" +(?=\\d)", "0");
 //        String addZerosBehind = addZerosInfront.replaceAll("\\d(?=\\s+)", "0");
 //        System.out.println(addZerosBehind);
         String[] split = daySixAsString.split("\\n");
         MathOperation.calculateTwo(split);
-        for (String each: split) System.out.println("."+each+".");
+        System.out.println(split[0].length());
+//        for (String each: split) System.out.println(each);
 //        System.out.println(newMatrix.data);
 
 //        System.out.println(matrix.data);
-        Matrix transposedMatrix = matrix.transpose();
+//        Matrix transposedMatrix = matrix.transpose();
 //        long result = MathOperation.calculate(transposedMatrix);
 //        System.out.println(result);
 
