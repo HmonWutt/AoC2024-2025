@@ -290,16 +290,7 @@ public class Main {
         inputDownloader.downloadInput("https://adventofcode.com/2025/day/8/input", "081225");
         ArrayList<String> dayEight = scanner.loadAsArray("test8");
         Jbox.setAllJboxes(dayEight);
-        Jbox.showEachBoxClosest(Jbox.allJboxes);
-        ArrayList<HashSet<Jbox>> circuits = new ArrayList<>();
-        for (Jbox each: Jbox.allJboxes){
-            HashSet<Jbox> newCircuit= new HashSet<>();
-            newCircuit.add(each);
-            circuits.add(newCircuit);
-        }
-        ArrayList<HashSet<Jbox>> groups = Jbox.groupJboxes(Jbox.allJboxes,circuits);
-        System.out.println("Groups: "+groups);
-
+        Jbox.findTopClosestBoxes(10,Jbox.allJboxes);
 
     }
 
