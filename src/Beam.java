@@ -120,23 +120,27 @@ public class Beam {
     }
 
 
-    public int explore(int row, int col) {
-        int count = 0;
+    private long explore(int row, int col, HashMap<Coordinate,Long>library) {
+        long count = 0;
         if (row == map.size() ) {
+
             return count + 1;
+        }
+        if (library.containsKey(new Coordinate(row,col))){
+            return library.get(new Coordinate(row,col));
         }
 
         if (map.get(row).charAt( col) == '^') {
             if (row+2 <=map.size() && col+1 < map.size() && col-1 >=0){
-
-                count += explore(row + 2, col + 1);
-                count += explore(row+2, col - 1);
+                count += explore(row + 2, col + 1,library);
+                count += explore(row+2, col - 1,library);
             }
         } else {
             if (row+2<= map.size() ) {
-                count += explore(row + 2, col);
+                count += explore(row + 2, col,library);
             }
         }
+        library.put(new Coordinate(row,col), count);
         return count;
 
     }
@@ -144,7 +148,8 @@ public class Beam {
     public void run(){
         int col = this.startPosition.getLast();
         int row = 2;
-        int count = explore(row,col);
+        HashMap<Coordinate,Long> library = new HashMap<>();
+        long count = explore(row,col,library);
         System.out.println(count);
     }
 
