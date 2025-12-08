@@ -275,19 +275,34 @@ public class Main {
 //        System.out.println(split[0].length());
 //        System.out.println(newMatrix.data);
 
-        inputDownloader.downloadInput("https://adventofcode.com/2025/day/7/input", "071225");
-        ArrayList<String> daySeven = scanner.loadAsArray("071225");
-        Beam beam = new Beam(daySeven);
+//        inputDownloader.downloadInput("https://adventofcode.com/2025/day/7/input", "071225");
+//        ArrayList<String> daySeven = scanner.loadAsArray("071225");
+//        Beam beam = new Beam(daySeven);
 //        int splittersCount = beam.getSplitterCount();
 //        System.out.println(splittersCount);
-        beam.run();
+//        beam.run();
 
 //        System.out.println(matrix.data);
 //        Matrix transposedMatrix = matrix.transpose();
 //        long result = MathOperation.calculate(transposedMatrix);
 //        System.out.println(result);
 
+        inputDownloader.downloadInput("https://adventofcode.com/2025/day/8/input", "081225");
+        ArrayList<String> dayEight = scanner.loadAsArray("test8");
+        Jbox.setAllJboxes(dayEight);
+        Jbox.showEachBoxClosest(Jbox.allJboxes);
+        ArrayList<HashSet<Jbox>> circuits = new ArrayList<>();
+        for (Jbox each: Jbox.allJboxes){
+            HashSet<Jbox> newCircuit= new HashSet<>();
+            newCircuit.add(each);
+            circuits.add(newCircuit);
+        }
+        ArrayList<HashSet<Jbox>> groups = Jbox.groupJboxes(Jbox.allJboxes,circuits);
+        System.out.println("Groups: "+groups);
+
+
     }
+
 //    public static int run(int gridLen, int old_count){
 //        int count = old_count;
 //        for (int x = 0; x < gridLen; x++) {
