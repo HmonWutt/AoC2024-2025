@@ -1,12 +1,10 @@
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class Beam {
     Set <Integer > beamPositions = new HashSet<>();
     ArrayList<Integer> startPosition = new ArrayList<>();
     ArrayList<String> map = new ArrayList<>();
+    ArrayList<String> paths = new ArrayList<>();
     int splitterCount;
     public Beam(ArrayList<String>map){
         this.map = map;
@@ -18,6 +16,7 @@ public class Beam {
             if (map.getFirst().charAt(i) == 'S'){
                 this.startPosition= new ArrayList<>(List.of(0,i));
                 this.beamPositions.add(this.startPosition.getLast());
+                this.paths.add(String.valueOf(this.startPosition.getFirst())+String.valueOf(this.startPosition.getLast()));
                 return;
             }
         }
@@ -51,4 +50,78 @@ public class Beam {
     public int getSplitterCount(){
         return this.splitterCount;
     }
+
+    public int getUniquePaths(){
+        return this.paths.size();
+    }
+
+    public String checkIfPathHasBeenTakenIfNotTakeThatPath(String oldString,int row, int col){
+
+        StringBuilder newPath= new StringBuilder(oldString+String.valueOf(row)+ col);
+        if(!this.paths.contains(newPath) ){
+            return newPath.toString();
+
+        }
+        return "";
+    }
+
+    public void followAllPaths( ){
+        int count=0;
+        int startRow = 2;
+        Set <Coordinate> explored = new HashSet<>();
+        int startColumn = startPosition.getLast();
+        Coordinate dict = new Coordinate(startRow,startColumn);
+        Queue<Coordinate>queue = new LinkedList<>();
+        queue.add(dict);
+        int[]leftRight = {1,-1};
+        while (!queue.isEmpty()) {
+            Coordinate coordinate = queue.remove();
+            if (!explored.contains(coordinate)) {
+                int row = coordinate.row;
+                System.out.println("row: " + map.get(row));
+                row += 2;
+                int col = coordinate.col;
+                if (row < map.size()) {
+                    for (int each : leftRight) {
+                        if (col + each < map.size() && col + each >= 0) {
+                            System.out.println("character at posiotn: "+map.get(row).charAt(col + each));
+                            if (map.get(row).charAt(col + each) == '^') {
+                                Coordinate newCoordinate = new Coordinate(row, col + each);
+//                           System.out.println(newCoordinate);
+                                queue.add(newCoordinate);
+                            } else {
+                                Coordinate newCoordinate = findNextSplitter(row, col + each);
+                                System.out.println(newCoordinate.row + "," + newCoordinate.col);
+                                if (newCoordinate.row != 0 && newCoordinate.col != 0) queue.add(newCoordinate);
+                            }
+
+                        }
+
+                    }
+                    explored.add(coordinate);
+
+                }
+            }
+
+            count+=1;
+        }
+        System.out.println("Total paths: "+count);
+    }
+
+    private Coordinate findNextSplitter(int row,int col){
+        int newRow= row+2;
+        while (newRow < map.size()){
+            if (map.get(newRow).charAt(col)=='^'){
+                return new Coordinate(newRow,col);
+            }
+            newRow+=2;
+        }
+        return new Coordinate(0,0);
+    }
+
+    record Coordinate(int row, int col) {};
+    record Splitter<K, V>(K key, V value) {}
+
+
+
 }
