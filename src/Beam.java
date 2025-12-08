@@ -119,8 +119,40 @@ public class Beam {
         return new Coordinate(0,0);
     }
 
+
+    public int explore(int row, int col) {
+        int count = 0;
+        if (row == map.size() ) {
+            return count + 1;
+        }
+
+        if (map.get(row).charAt( col) == '^') {
+            if (row+2 <=map.size() && col+1 < map.size() && col-1 >=0){
+
+                count += explore(row + 2, col + 1);
+                count += explore(row+2, col - 1);
+            }
+        } else {
+            if (row+2<= map.size() ) {
+                count += explore(row + 2, col);
+            }
+        }
+        return count;
+
+    }
+
+    public void run(){
+        int col = this.startPosition.getLast();
+        int row = 2;
+        int count = explore(row,col);
+        System.out.println(count);
+    }
+
     record Coordinate(int row, int col) {};
     record Splitter<K, V>(K key, V value) {}
+
+
+
 
 
 

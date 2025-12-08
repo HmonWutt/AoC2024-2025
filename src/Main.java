@@ -276,13 +276,11 @@ public class Main {
 //        System.out.println(newMatrix.data);
 
         inputDownloader.downloadInput("https://adventofcode.com/2025/day/7/input", "071225");
-        ArrayList<String> daySeven = scanner.loadAsArray("test7");
+        ArrayList<String> daySeven = scanner.loadAsArray("071225");
         Beam beam = new Beam(daySeven);
 //        int splittersCount = beam.getSplitterCount();
 //        System.out.println(splittersCount);
-        int pathsCount = beam.getUniquePaths();
-        System.out.println(pathsCount);
-        beam.followAllPaths();
+        beam.run();
 
 //        System.out.println(matrix.data);
 //        Matrix transposedMatrix = matrix.transpose();
