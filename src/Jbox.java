@@ -51,7 +51,7 @@ public class Jbox {
         }
         ArrayList<HashSet<Jbox>> connectedCircuits = Jbox.group(closest,limit,circuits, 0);
 
-        ArrayList<HashSet<Jbox>> finalConnectedCircuits = Jbox.makeFinalMerge(0,connectedCircuits);
+        ArrayList<HashSet<Jbox>> finalConnectedCircuits = Jbox.makeFinalMerge(0,10, 0,connectedCircuits);
         finalConnectedCircuits.sort(Comparator.comparingInt(Set::size));
         int total = 0;
         for (HashSet<Jbox> each: finalConnectedCircuits){
@@ -60,41 +60,41 @@ public class Jbox {
         }
         System.out.println("Total: "+total);
     }
-    private static ArrayList<HashSet<Jbox>> makeFinalMerge(int index,ArrayList<HashSet<Jbox>>connectedCircuits   ){
+    private static ArrayList<HashSet<Jbox>> makeFinalMerge(int index,int limit,int start, ArrayList<HashSet<Jbox>>connectedCircuits   ){
+        if (start == limit ){
+            return connectedCircuits;
+        }
         ArrayList<HashSet<Jbox>> copy = new ArrayList<>();
         for (HashSet<Jbox> c : connectedCircuits) {
             copy.add(new HashSet<>(c));   // deep copy of each set
         }
-        if (index == connectedCircuits.size()-1){
-            return connectedCircuits;
-        }
-
-        for (int i= 0; i < connectedCircuits.size() && i!=index; i++) {
-            HashSet<Jbox> circuit1 = connectedCircuits.get(i);
-            HashSet<Jbox> circuit2 = connectedCircuits.get(index);
-            Set<Jbox> intersection =
+        int len = connectedCircuits.size();
+        for (int i= 0; i < len ; i++) {
+            for (int j=i+1; j < len ; j++) {
+                HashSet<Jbox> circuit1 = connectedCircuits.get(i);
+                HashSet<Jbox> circuit2 = connectedCircuits.get(j);
+                Set<Jbox> intersection =
                         circuit1.stream()
                                 .filter(circuit2::contains)
-                                .collect(Collectors.toSet());
-
-
-            if (!intersection.isEmpty()) {
-                HashSet<Jbox> union = (HashSet<Jbox>) Stream.concat(circuit1.stream(), circuit2.stream())
-                        .collect(Collectors.toSet());
-                copy.add(union);
-                copy.remove(circuit1);
-                copy.remove(circuit2);
-                index--;
-                break;
+                               .collect(Collectors.toSet());
+                if (!intersection.isEmpty()) {
+                    HashSet<Jbox> union = (HashSet<Jbox>) Stream.concat(circuit1.stream(), circuit2.stream())
+                            .collect(Collectors.toSet());
+                    copy.add(union);
+                    copy.remove(circuit1);
+                    copy.remove(circuit2);
+                    index--;
+                    break;
                 }
-        }
-        connectedCircuits =  makeFinalMerge(index+1,copy);
-        return connectedCircuits;
+            }
 
+        }
+        connectedCircuits = makeFinalMerge(index+1,limit,  start+1,copy);
+        return connectedCircuits;
     }
 
     private static ArrayList<HashSet<Jbox>> group (ArrayList<DistanceJbox> allPairs,int limit, ArrayList<HashSet <Jbox>> circuits, int index){
-        if (index == allPairs.size()){
+        if (index == limit){
             return circuits;
         }
         DistanceJbox pair = allPairs.get(index);
@@ -105,12 +105,13 @@ public class Jbox {
             newCircuit.add(new HashSet<>(c));   // deep copy of each set
         }
         boolean isInCircuit = false;
-        for (int i=0 ; i < circuits.size() && index!=i; i++) {
+        int len = circuits.size();
+        for (int i=0 ; i < len && index!=i; i++) {
             HashSet<Jbox> eachCircuit = circuits.get(i);
+            HashSet<Jbox>copy = newCircuit.get(i);
             for (Jbox each: eachCircuit){
                 if (each.equals(first)|| each.equals(second)) {
                     isInCircuit = true;
-                    HashSet<Jbox> copy = newCircuit.get(i);
                     copy.add(first);
                     copy.add(second);
                 }
@@ -135,34 +136,6 @@ public class Jbox {
     public double getDistanceBetweenThisAndOther(Jbox other){
         return Math.sqrt(Math.pow(this.x - other.x,2)+Math.pow(this.y-other.y,2)+ Math.pow(this.z-other.z,2));
     }
-
-//    private PriorityQueue<DistanceJbox> findClosesJboxes(ArrayList<Jbox> jboxes){
-//        PriorityQueue<DistanceJbox> heap = new PriorityQueue<>(
-//                Comparator.comparingDouble(p -> p.distance)
-//        );
-//        for (int i =0; i< jboxes.size();i++){
-//            Jbox other = jboxes.get(i);
-//            if (this != other ){
-//                double distance = getDistanceBetweenThisAndOther(other);
-//                heap.offer(new DistanceJbox(distance,other));
-//            }
-//        }
-//        return heap;
-//    }
-
-//    private Jbox getClosestOne(ArrayList<Jbox>jboxes){
-//        this.heap = this.findClosesJboxes(jboxes);
-//        return this.heap.peek().otherJbox();
-//    }
-//
-//    public static void showEachBoxClosest(ArrayList<Jbox> jboxes){
-//        for (Jbox each: Jbox.allJboxes){
-//            System.out.println("This Jbox: "+ each.x+","+ each.y+","+ each.z);
-//            Jbox cloestOne = each.getClosestOne(jboxes);
-//            System.out.println("Other Jbox: "+ cloestOne.x+","+ cloestOne.y+","+ cloestOne.z);
-//            System.out.println();
-//        }
-//    }
 
     record DistanceJbox (double distance ,Jbox thisBox, Jbox otherJbox){}
 }

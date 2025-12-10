@@ -287,10 +287,10 @@ public class Main {
 //        long result = MathOperation.calculate(transposedMatrix);
 //        System.out.println(result);
 
-        inputDownloader.downloadInput("https://adventofcode.com/2025/day/8/input", "081225");
-        ArrayList<String> dayEight = scanner.loadAsArray("test8");
+//        inputDownloader.downloadInput("https://adventofcode.com/2025/day/8/input", "081225");
+        ArrayList<String> dayEight = scanner.loadAsArray("081225");
         Jbox.setAllJboxes(dayEight);
-        Jbox.findTopClosestBoxes(10,Jbox.allJboxes);
+        Jbox.findTopClosestBoxes(1000,Jbox.allJboxes);
 
     }
 
