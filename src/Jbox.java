@@ -1,5 +1,7 @@
+import java.lang.module.FindException;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Jbox {
     static ArrayList<Jbox> allJboxes = new ArrayList<>();
@@ -36,35 +38,91 @@ public class Jbox {
     public static void findTopClosestBoxes(int limit, ArrayList<Jbox> allJboxes){
         int index = 0;
         PriorityQueue<DistanceJbox> heap = Jbox.findClosestJboxes(allJboxes);
-        HashSet<DistanceJbox > closest = new HashSet<>();
-        while (index < limit && !heap.isEmpty()){
+        ArrayList<DistanceJbox > closest = new ArrayList<>();
+        ArrayList<HashSet<Jbox>> circuits = new ArrayList<>();
+        System.out.println("heap size: "+heap.size());
+        while (index <limit && !heap.isEmpty()){
             DistanceJbox each = heap.poll();
             System.out.println(each.thisBox.x+","+each.thisBox.y+","+each.thisBox.y+"---"+ each.otherJbox.x+","+each.otherJbox.y+","+each.otherJbox.z);
             System.out.println(each.distance);
             System.out.println();
             closest.add(each);
+            index++;
         }
-        group(closest);
+        ArrayList<HashSet<Jbox>> connectedCircuits = Jbox.group(closest,limit,circuits, 0);
+
+        ArrayList<HashSet<Jbox>> finalConnectedCircuits = Jbox.makeFinalMerge(0,connectedCircuits);
+        finalConnectedCircuits.sort(Comparator.comparingInt(Set::size));
+        int total = 0;
+        for (HashSet<Jbox> each: finalConnectedCircuits){
+            System.out.println("size : "+ each.size());
+            total+= each.size();
+        }
+        System.out.println("Total: "+total);
+    }
+    private static ArrayList<HashSet<Jbox>> makeFinalMerge(int index,ArrayList<HashSet<Jbox>>connectedCircuits   ){
+        ArrayList<HashSet<Jbox>> copy = new ArrayList<>();
+        for (HashSet<Jbox> c : connectedCircuits) {
+            copy.add(new HashSet<>(c));   // deep copy of each set
+        }
+        if (index == connectedCircuits.size()-1){
+            return connectedCircuits;
+        }
+
+        for (int i= 0; i < connectedCircuits.size() && i!=index; i++) {
+            HashSet<Jbox> circuit1 = connectedCircuits.get(i);
+            HashSet<Jbox> circuit2 = connectedCircuits.get(index);
+            Set<Jbox> intersection =
+                        circuit1.stream()
+                                .filter(circuit2::contains)
+                                .collect(Collectors.toSet());
+
+
+            if (!intersection.isEmpty()) {
+                HashSet<Jbox> union = (HashSet<Jbox>) Stream.concat(circuit1.stream(), circuit2.stream())
+                        .collect(Collectors.toSet());
+                copy.add(union);
+                copy.remove(circuit1);
+                copy.remove(circuit2);
+                index--;
+                break;
+                }
+        }
+        connectedCircuits =  makeFinalMerge(index+1,copy);
+        return connectedCircuits;
+
     }
 
-
-    public static void group (HashSet<DistanceJbox> all){
-        ArrayList<HashSet<Jbox>> groups = new ArrayList<>();
-        for (DistanceJbox each: all){
-            for (DistanceJbox each1: all){
-                if (each!=each1){
-                    HashSet<Jbox> circuit = new HashSet<>();
-                    HashSet<Jbox> temp = new HashSet<>(Arrays.asList(each.thisBox, each.otherJbox));
-                    HashSet<Jbox> temp1 = new HashSet<>(Arrays.asList(each1.thisBox, each1.otherJbox));
-                    HashSet<Jbox> intersection = temp.stream().filter(temp1::contains).collect(Collectors.toCollection(HashSet::new));
-                    if (!intersection.isEmpty()){
-                        circuit.addAll(intersection);
-                        System.out.println(circuit.size());
-                    }
+    private static ArrayList<HashSet<Jbox>> group (ArrayList<DistanceJbox> allPairs,int limit, ArrayList<HashSet <Jbox>> circuits, int index){
+        if (index == allPairs.size()){
+            return circuits;
+        }
+        DistanceJbox pair = allPairs.get(index);
+        Jbox first = pair.thisBox;
+        Jbox second = pair.otherJbox;
+        ArrayList<HashSet<Jbox>> newCircuit = new ArrayList<>();
+        for (HashSet<Jbox> c : circuits) {
+            newCircuit.add(new HashSet<>(c));   // deep copy of each set
+        }
+        boolean isInCircuit = false;
+        for (int i=0 ; i < circuits.size() && index!=i; i++) {
+            HashSet<Jbox> eachCircuit = circuits.get(i);
+            for (Jbox each: eachCircuit){
+                if (each.equals(first)|| each.equals(second)) {
+                    isInCircuit = true;
+                    HashSet<Jbox> copy = newCircuit.get(i);
+                    copy.add(first);
+                    copy.add(second);
                 }
             }
         }
-        System.out.println(groups);
+        if (!isInCircuit) {
+            HashSet<Jbox> temp = new HashSet<>();
+            temp.add(first);
+            temp.add(second);
+            newCircuit.add(temp);
+        }
+        return group(allPairs, limit, newCircuit,index+1);
     }
     public static void setAllJboxes(ArrayList<String> input){
         for (String  each: input){
