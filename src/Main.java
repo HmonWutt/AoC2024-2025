@@ -288,9 +288,12 @@ public class Main {
 //        System.out.println(result);
 
 //        inputDownloader.downloadInput("https://adventofcode.com/2025/day/8/input", "081225");
-        ArrayList<String> dayEight = scanner.loadAsArray("081225");
-        Jbox.setAllJboxes(dayEight);
-        Jbox.findTopClosestBoxes(1000,Jbox.allJboxes);
+        ArrayList<String> dayEight = scanner.loadAsArray("test8");
+//        Jbox.setAllJboxes(dayEight);
+//        Jbox.findTopClosestBoxes(10,Jbox.allJboxes);
+        inputDownloader.downloadInput("https://adventofcode.com/2025/day/9/input", "091225");
+        ArrayList<String> dayNine = scanner.loadAsArray("091225");
+        TheatreFloor.findSameXAndSameY(dayNine);
 
     }
 
