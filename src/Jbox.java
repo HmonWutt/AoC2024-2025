@@ -49,7 +49,7 @@ public class Jbox {
             closest.add(each);
             index++;
         }
-        ArrayList<HashSet<Jbox>> connectedCircuits = Jbox.group(closest,limit,circuits, 0);
+        ArrayList<HashSet<Jbox>> connectedCircuits = Jbox.group(closest,circuits, 0);
 
         ArrayList<HashSet<Jbox>> finalConnectedCircuits = Jbox.makeFinalMerge(0,10, 0,connectedCircuits);
         finalConnectedCircuits.sort(Comparator.comparingInt(Set::size));
@@ -59,6 +59,9 @@ public class Jbox {
             total+= each.size();
         }
         System.out.println("Total: "+total);
+        System.out.println("Part two");
+//        ArrayList<HashSet<Jbox> allCircuits = Jbox.group(new ArrayList<>(List.of(heap)), limit,)
+//        ArrayList<HashSet<Jbox>> allConnected = Jbox.makeFinalMerge(0,10,0,)
     }
     private static ArrayList<HashSet<Jbox>> makeFinalMerge(int index,int limit,int start, ArrayList<HashSet<Jbox>>connectedCircuits   ){
         if (start == limit ){
@@ -93,8 +96,8 @@ public class Jbox {
         return connectedCircuits;
     }
 
-    private static ArrayList<HashSet<Jbox>> group (ArrayList<DistanceJbox> allPairs,int limit, ArrayList<HashSet <Jbox>> circuits, int index){
-        if (index == limit){
+    private static ArrayList<HashSet<Jbox>> group (ArrayList<DistanceJbox> allPairs, ArrayList<HashSet <Jbox>> circuits, int index){
+        if (index == allPairs.size()){
             return circuits;
         }
         DistanceJbox pair = allPairs.get(index);
@@ -123,7 +126,7 @@ public class Jbox {
             temp.add(second);
             newCircuit.add(temp);
         }
-        return group(allPairs, limit, newCircuit,index+1);
+        return group(allPairs, newCircuit,index+1);
     }
     public static void setAllJboxes(ArrayList<String> input){
         for (String  each: input){
