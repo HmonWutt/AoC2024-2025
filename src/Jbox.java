@@ -38,6 +38,7 @@ public class Jbox {
     public static void findTopClosestBoxes(int limit, ArrayList<Jbox> allJboxes){
         int index = 0;
         PriorityQueue<DistanceJbox> heap = Jbox.findClosestJboxes(allJboxes);
+        PriorityQueue<DistanceJbox> heapCopy = Jbox.findClosestJboxes(allJboxes);
         ArrayList<DistanceJbox > closest = new ArrayList<>();
         ArrayList<HashSet<Jbox>> circuits = new ArrayList<>();
         System.out.println("heap size: "+heap.size());
@@ -51,7 +52,7 @@ public class Jbox {
         }
         ArrayList<HashSet<Jbox>> connectedCircuits = Jbox.group(closest,circuits, 0);
 
-        ArrayList<HashSet<Jbox>> finalConnectedCircuits = Jbox.makeFinalMerge(0,10, 0,connectedCircuits);
+        ArrayList<HashSet<Jbox>> finalConnectedCircuits = Jbox.makeFinalMerge(0,connectedCircuits.size(), 0,connectedCircuits);
         finalConnectedCircuits.sort(Comparator.comparingInt(Set::size));
         int total = 0;
         for (HashSet<Jbox> each: finalConnectedCircuits){
@@ -60,13 +61,12 @@ public class Jbox {
         }
         System.out.println("Total: "+total);
         System.out.println("Part two");
-//        ArrayList<HashSet<Jbox> allCircuits = Jbox.group(new ArrayList<>(List.of(heap)), limit,)
-//        ArrayList<HashSet<Jbox>> allConnected = Jbox.makeFinalMerge(0,10,0,)
+        Object[] arr = heapCopy.toArray();
+        /// run group
+        /// check when the cirsuit.len becomes one"
     }
-    private static ArrayList<HashSet<Jbox>> makeFinalMerge(int index,int limit,int start, ArrayList<HashSet<Jbox>>connectedCircuits   ){
-        if (start == limit ){
-            return connectedCircuits;
-        }
+    private static ArrayList<HashSet<Jbox>> makeFinalMerge(int index,int oldNumberOfCircuits,int start, ArrayList<HashSet<Jbox>>connectedCircuits   ){
+
         ArrayList<HashSet<Jbox>> copy = new ArrayList<>();
         for (HashSet<Jbox> c : connectedCircuits) {
             copy.add(new HashSet<>(c));   // deep copy of each set
@@ -91,8 +91,12 @@ public class Jbox {
                 }
             }
 
+
         }
-        connectedCircuits = makeFinalMerge(index+1,limit,  start+1,copy);
+        if (oldNumberOfCircuits == copy.size() ){
+            return connectedCircuits;
+        }
+        connectedCircuits = makeFinalMerge(index+1,copy.size(), start+1,copy);
         return connectedCircuits;
     }
 
