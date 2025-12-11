@@ -289,7 +289,13 @@ public class Main {
 
 //        inputDownloader.downloadInput("https://adventofcode.com/2025/day/8/input", "081225");
         ArrayList<String> dayEight = scanner.loadAsArray("081225");
-        Jbox.run(dayEight);
+//        Jbox.run(dayEight);
+
+
+//        inputDownloader.downloadInput("https://adventofcode.com/2025/day/11/input", "111225");
+        ArrayList<String> dayEleven = scanner.loadAsArray("test11");
+        Device device = new Device(dayEleven,"svr");
+
 
 
 
