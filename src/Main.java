@@ -289,8 +289,10 @@ public class Main {
 
 //        inputDownloader.downloadInput("https://adventofcode.com/2025/day/8/input", "081225");
         ArrayList<String> dayEight = scanner.loadAsArray("081225");
-        Jbox.setAllJboxes(dayEight);
-        Jbox.findTopClosestBoxes(1000,Jbox.allJboxes);
+        Jbox.run(dayEight);
+
+
+
 //        inputDownloader.downloadInput("https://adventofcode.com/2025/day/9/input", "091225");
 //        ArrayList<String> dayNine = scanner.loadAsArray("test9");
 //        TheatreFloor floor = new TheatreFloor();

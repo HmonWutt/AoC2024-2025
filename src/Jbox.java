@@ -1,4 +1,3 @@
-import java.lang.module.FindException;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -11,16 +10,13 @@ public class Jbox {
     PriorityQueue<DistanceJbox> heap = new PriorityQueue<>(
             Comparator.comparingDouble(p -> p.distance)
     );
-    Jbox closestOne;
 
     Jbox(int x, int y, int z){
         this.x = x;
         this.y = y;
         this.z = z;
-
     }
-
-    public static PriorityQueue<DistanceJbox> findClosestJboxes(ArrayList<Jbox> allJboxes){
+    private static PriorityQueue<DistanceJbox> orderJboxPairsByDistance(ArrayList<Jbox> allJboxes){
         PriorityQueue<DistanceJbox> heap = new PriorityQueue<>(Comparator.comparingDouble(x->x.distance));
         for (int i = 0; i < allJboxes.size(); i++){
             for (int j = i+1; j < allJboxes.size(); j++){
@@ -29,17 +25,27 @@ public class Jbox {
                 Double distance = first.getDistanceBetweenThisAndOther(second);
                 DistanceJbox twoJboxes = new DistanceJbox(distance, first,second);
                 heap.offer(twoJboxes);
-
                 }
         }
+
         return heap;
     }
 
-    public static void findTopClosestBoxes(int limit, ArrayList<Jbox> allJboxes){
+    private static void findLastTwoJboxesThatMakesOneCircuit(ArrayList<Jbox> allJboxes){
+        PriorityQueue<DistanceJbox> heap = Jbox.orderJboxPairsByDistance(allJboxes);
+        ArrayList<Jbox> lastPair = Jbox.connectAllJboxes(heap,new ArrayList<HashSet<Jbox>>());
+        long total = 1;
+        for (Jbox each: lastPair){
+            total*=each.x;
+            System.out.println(each.x);
+        }
+        System.out.println("total: "+total);
+    }
+    private static void findNclosestJboxes(int limit, ArrayList<Jbox> allJboxes){
         int index = 0;
-        PriorityQueue<DistanceJbox> heap = Jbox.findClosestJboxes(allJboxes);
+        PriorityQueue<DistanceJbox> heap = Jbox.orderJboxPairsByDistance(allJboxes);
         ArrayList<HashSet<Jbox>> closest = new ArrayList<>();
-        System.out.println("heap size: "+heap.size());
+//        System.out.println("heap size: "+heap.size());
         while (!heap.isEmpty() && index<limit){
             DistanceJbox each = heap.poll();
 //            System.out.println(each.thisBox.x+","+each.thisBox.y+","+each.thisBox.y+"---"+ each.otherJbox.x+","+each.otherJbox.y+","+each.otherJbox.z);
@@ -50,7 +56,7 @@ public class Jbox {
             closest.add(new HashSet<>(List.of(first,second)));
             index++;
         }
-        ArrayList<HashSet<Jbox>> finalConnectedCircuits = Jbox.makeFinalMerge(closest.size(), closest);
+        ArrayList<HashSet<Jbox>> finalConnectedCircuits = Jbox.connectTopClosestJboxes(closest.size(), closest);
         finalConnectedCircuits.sort(Comparator.comparingInt(Set::size));
         int total = 1;
         for (int i = 0; i <3; i++){
@@ -58,7 +64,7 @@ public class Jbox {
         }
         System.out.println("Total: "+total);
     }
-    private static ArrayList<HashSet<Jbox>> makeFinalMerge( int oldNumberOfCircuits, ArrayList<HashSet<Jbox>>connectedCircuits   ){
+    private static ArrayList<HashSet<Jbox>> connectTopClosestJboxes(int oldNumberOfCircuits, ArrayList<HashSet<Jbox>>connectedCircuits   ){
 
         ArrayList<HashSet<Jbox>> copy = new ArrayList<>();
         for (HashSet<Jbox> c : connectedCircuits) {
@@ -83,17 +89,52 @@ public class Jbox {
                     break;
                 }
             }
-//            if (inCircuit) break;
 
         }
         if (oldNumberOfCircuits == copy.size() ){
             return connectedCircuits;
         }
 
-        return makeFinalMerge(copy.size(), copy);
+        return connectTopClosestJboxes(copy.size(), copy);
     }
 
-    public static void setAllJboxes(ArrayList<String> input){
+    private static ArrayList<Jbox> connectAllJboxes(PriorityQueue<DistanceJbox> heap, ArrayList<HashSet<Jbox>> circuits ){
+        if (heap.isEmpty()){
+            System.out.println("heap empty");
+            return null;
+        }
+//        System.out.println(heap.size());
+        DistanceJbox first = heap.poll();
+        ArrayList<HashSet<Jbox>> newCircuits= new ArrayList<>();
+        if (circuits.isEmpty()){
+            HashSet<Jbox> temp = new HashSet<>(List.of(first.thisBox,first.otherJbox));
+            circuits.add(temp);
+        }
+        else {
+            int len = circuits.size();
+            HashSet<Jbox> temp = new HashSet<>();
+            ArrayList<HashSet<Jbox>> toREmove = new ArrayList<>();
+            for (int i = 0; i < len; i++) {
+                HashSet<Jbox> circuit = circuits.get(i);
+                if (circuit.contains(first.thisBox) || circuit.contains(first.otherJbox) ){
+                    temp.addAll(circuit);
+                    toREmove.add(circuit);
+                }
+            }
+            temp.add(first.thisBox);
+            temp.add(first.otherJbox);
+            circuits.add(temp);
+            for (HashSet<Jbox> each: toREmove){
+                circuits.remove(each);
+            }
+        }
+        if ( circuits.size() == 1 && circuits.getFirst().size()==allJboxes.size()){
+            return new ArrayList<Jbox> (List.of(first.thisBox, first.otherJbox));
+        }
+
+        return connectAllJboxes(heap,circuits);
+    }
+    private static void setAllJboxes(ArrayList<String> input){
         for (String  each: input){
             String[] split = each.split(",");
             Jbox jbox = new Jbox(Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2]));
@@ -101,9 +142,14 @@ public class Jbox {
         }
     }
 
-    public double getDistanceBetweenThisAndOther(Jbox other){
+    private double getDistanceBetweenThisAndOther(Jbox other){
         return Math.sqrt(Math.pow(this.x - other.x,2)+Math.pow(this.y-other.y,2)+ Math.pow(this.z-other.z,2));
     }
 
+    public static void run(ArrayList<String> input){
+        Jbox.setAllJboxes(input);
+        Jbox.findNclosestJboxes(1000, Jbox.allJboxes);
+        Jbox.findLastTwoJboxesThatMakesOneCircuit(Jbox.allJboxes);
+    }
     record DistanceJbox (double distance ,Jbox thisBox, Jbox otherJbox){}
 }
