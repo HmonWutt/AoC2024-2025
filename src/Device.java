@@ -13,6 +13,7 @@ public class Device {
         }
 
         this.outs = this.traverse(startingPoint);
+        String[] paths = this.traverseRecursively("svr", "", new ArrayList<String>(), this.queue).toArray(new String[0]);
         System.out.println("Outs: "+outs);
 
     }
@@ -33,6 +34,23 @@ public class Device {
             }
         }
         return outs;
+
+    }
+
+    private List<String> traverseRecursively(String startDevice, String path, List<String> paths, Queue<String> queue){
+        String currentDevice = "";
+        if (!queue.isEmpty()){
+            currentDevice = queue.poll();
+        }
+        if (currentDevice.equals("out")){
+            paths.add(path);
+            return paths;
+        }
+
+        String [] nextDevices = this.deviceAndOutput.get(currentDevice);
+        queue.addAll(List.of(nextDevices));
+        paths.addAll(traverseRecursively(startDevice,path+currentDevice,paths, queue));
+        return paths;
 
     }
 

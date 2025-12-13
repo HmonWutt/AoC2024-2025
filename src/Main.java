@@ -296,13 +296,23 @@ public class Main {
         ArrayList<String> dayEleven = scanner.loadAsArray("test11");
         Device device = new Device(dayEleven,"svr");
 
-
-
+        ArrayList<String> dayTen = scanner.loadAsArray("test10");
+        Config config = new Config();
+//        config.splitInputIntoMachineAndButtonsAndJoltage(dayTen);
 
 //        inputDownloader.downloadInput("https://adventofcode.com/2025/day/9/input", "091225");
-//        ArrayList<String> dayNine = scanner.loadAsArray("test9");
-//        TheatreFloor floor = new TheatreFloor();
-//        floor.findSameXAndSameY(dayNine);
+        ArrayList<String> dayNine = scanner.loadAsArray("test9");
+        TheatreFloor floor = new TheatreFloor();
+        TheatreFloor.findSameXAndSameY(dayNine);
+        PriorityQueue<Long> sizes = TheatreFloor.findBiggestSquare(dayNine, new PriorityQueue<>());
+        System.out.println("biggest: "+Collections.max(sizes));
+
+        ArrayList <String> lastThree = new ArrayList<>();
+        lastThree.add(dayNine.get(dayNine.size()-2));
+        lastThree.add(dayNine.get(dayNine.size()-1));
+        lastThree.add(dayNine.getFirst());
+        PriorityQueue<Long> sizes1 = TheatreFloor.findBiggestSquare(lastThree,sizes);
+        System.out.println(sizes1.peek());
 
     }
 
