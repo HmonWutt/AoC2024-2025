@@ -302,10 +302,7 @@ public class Main {
 
 //        inputDownloader.downloadInput("https://adventofcode.com/2025/day/9/input", "091225");
         ArrayList<String> dayNine = scanner.loadAsArray("test9");
-        TheatreFloor floor = new TheatreFloor();
-        TheatreFloor.findSameXAndSameY(dayNine);
-        PriorityQueue<Long> sizes = TheatreFloor.findBiggestSquare(dayNine, new PriorityQueue<>());
-        System.out.println("biggest: "+Collections.max(sizes));
+        TheatreFloor.run(dayNine);
 
     }
 
