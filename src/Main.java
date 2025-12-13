@@ -294,10 +294,10 @@ public class Main {
 
 //        inputDownloader.downloadInput("https://adventofcode.com/2025/day/11/input", "111225");
         ArrayList<String> dayEleven = scanner.loadAsArray("test11");
-        Device device = new Device(dayEleven,"svr");
+//        Device device = new Device(dayEleven,"svr");
 
         ArrayList<String> dayTen = scanner.loadAsArray("test10");
-        Config config = new Config();
+//        Config config = new Config();
 //        config.splitInputIntoMachineAndButtonsAndJoltage(dayTen);
 
 //        inputDownloader.downloadInput("https://adventofcode.com/2025/day/9/input", "091225");
@@ -306,13 +306,6 @@ public class Main {
         TheatreFloor.findSameXAndSameY(dayNine);
         PriorityQueue<Long> sizes = TheatreFloor.findBiggestSquare(dayNine, new PriorityQueue<>());
         System.out.println("biggest: "+Collections.max(sizes));
-
-        ArrayList <String> lastThree = new ArrayList<>();
-        lastThree.add(dayNine.get(dayNine.size()-2));
-        lastThree.add(dayNine.get(dayNine.size()-1));
-        lastThree.add(dayNine.getFirst());
-        PriorityQueue<Long> sizes1 = TheatreFloor.findBiggestSquare(lastThree,sizes);
-        System.out.println(sizes1.peek());
 
     }
 

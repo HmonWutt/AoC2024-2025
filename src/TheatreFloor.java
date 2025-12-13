@@ -5,22 +5,23 @@ import static java.lang.Math.abs;
 
 public class TheatreFloor {
 
-    static ArrayList<Point> allRedTiles = new ArrayList<>();
     static HashSet<Integer> sides = new HashSet<>();
     static PriorityQueue<Long> squaresOrderedByArea = new PriorityQueue<>(Comparator.comparingLong(x->x));
-    public static void mapAllTiles(ArrayList<String> redTileCoordinates){
+    public static ArrayList<Point> mapAllTiles(ArrayList<String> redTileCoordinates){
+        ArrayList<Point> allRedTiles = new ArrayList<>();
         for (String redTile: redTileCoordinates){
             String[] xy = redTile.split("," );
-            TheatreFloor.allRedTiles.add(new Point(Integer.parseInt(xy[0]), Integer.parseInt(xy[1]), new HashSet<Point>(), new HashSet<Point>()));
+            allRedTiles.add(new Point(Integer.parseInt(xy[0]), Integer.parseInt(xy[1]), new HashSet<Point>(), new HashSet<Point>()));
         }
+        return allRedTiles;
     }
 
     public static void findSameXAndSameY(ArrayList<String> redTiles){
-         TheatreFloor.mapAllTiles(redTiles);
-         for (int i=0; i < TheatreFloor.allRedTiles.size(); i++){
-             for (int j = i+1; j < TheatreFloor.allRedTiles.size(); j++){
-                 Point first = TheatreFloor.allRedTiles.get(i);
-                 Point second = TheatreFloor.allRedTiles.get(j);
+         ArrayList<Point> allRedTiles = TheatreFloor.mapAllTiles(redTiles);
+         for (int i=0; i < allRedTiles.size(); i++){
+             for (int j = i+1; j < allRedTiles.size(); j++){
+                 Point first = allRedTiles.get(i);
+                 Point second = allRedTiles.get(j);
                  int sideA = abs(first.y() - second.y())+1;
                  int  sideB = abs(first.x() - second.x())+1;
                  TheatreFloor.squaresOrderedByArea.add((long)sideA*sideB);
@@ -32,114 +33,57 @@ public class TheatreFloor {
     }
 
     public static PriorityQueue<Long> findBiggestSquare(ArrayList<String> redTiles, PriorityQueue<Long> sizes){
-        TheatreFloor.mapAllTiles(redTiles);
-        for (int i =0 ; i < allRedTiles.size()-2; i +=1){
-                Point first = (Point) allRedTiles.get(i);
-                Point second = (Point) allRedTiles.get(i+1);
-                Point third = (Point) allRedTiles.get(i+2);
-                if (first.x == second.x ){
-                    if (first.y  > second.y ) {
-                        if (third.x < first.x) {
-                            for (int k = i + 3; k < allRedTiles.size(); k++) {
-                                Point target = (Point) allRedTiles.get(k);
-                                if (target.x <= third.x && target.y >= first.y) {
-                                    int sideA = abs(first.y() - third.y()) ;
-                                    int sideB = abs(first.x() - third.x()) ;
-                                    sizes.add((long) sideA * sideB);
-                                    break;
-                                }
-                            }
-                        }
-                        else{
-                            for (int k = i + 3; k < allRedTiles.size(); k++) {
-                                Point target = (Point) allRedTiles.get(k);
-                                if (target.x >= third.x && target.y >= first.y) {
-                                    int sideA = abs(first.y() - third.y()) ;
-                                    int sideB = abs(first.x() - third.x()) ;
-                                    sizes.add((long) sideA * sideB);
-                                    break;
-                                }
-                            }
-                        }
-                    }
+        ArrayList<Point> allRedTiles = TheatreFloor.mapAllTiles(redTiles);
+        for (int i =0 ; i < allRedTiles.size(); i ++){
 
-                    if (first.y < second.y ){
-                        if (third.x < first.x) {
-                            for (int k = i + 3; k < allRedTiles.size(); k++) {
-                                Point target = (Point) allRedTiles.get(k);
-                                if (target.x <= third.x && target.y <= first.y) {
-                                    int sideA = abs(first.y() - third.y()) ;
-                                    int sideB = abs(first.x() - third.x()) ;
-                                    sizes.add((long) sideA * sideB);
-                                    break;
-                                }
-                            }
-                        }
-                        else{
-                            for (int k = i + 3; k < allRedTiles.size(); k++) {
-                                Point target = (Point) allRedTiles.get(k);
-                                if (target.x >= third.x && target.y <= first.y) {
-                                    int sideA = abs(first.y() - third.y());
-                                    int sideB = abs(first.x() - third.x()) ;
-                                    sizes.add((long) sideA * sideB);
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                }
-                else if  (first.y == second.y){
-                    if (first.x > third.x) {
-                        if (third.y > first.y) {
-                            //check x --, y --
-                            for (int k = i + 3; k < allRedTiles.size(); k++) {
-                                Point target = (Point) allRedTiles.get(k);
-                                if (target.x <= first.x && target.y >= third.y) {
-                                    int sideA = abs(first.y() - third.y()) ;
-                                    int sideB = abs(first.x() - third.x()) ;
-                                    sizes.add((long) sideA * sideB);
-                                    break;
-                                }
-                            }
-                        }
-                        else{
-                            for (int k = i + 3; k < allRedTiles.size(); k++) {
-                                Point target = (Point) allRedTiles.get(k);
-                                if (target.x >= first.x && target.y <= third.y) {
-                                    int sideA = abs(first.y() - third.y()) ;
-                                    int sideB = abs(first.x() - third.x()) ;
-                                    sizes.add((long) sideA * sideB);
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                    if (first.x < third.x) {
-                        if (first.y > third.y) {
-                            for (int k = i + 3; k < allRedTiles.size(); k++) {
-                                Point target = (Point) allRedTiles.get(k);
-                                if (target.x <= first.x && target.y >= third.y) {
-                                    int sideA = abs(first.y() - third.y()) ;
-                                    int sideB = abs(first.x() - third.x()) ;
-                                    sizes.add((long) sideA * sideB);
-                                    break;
-                                }
-                            }
-                        }
-                        else{
-                            for (int k = i + 3; k < allRedTiles.size(); k++) {
-                                Point target = (Point) allRedTiles.get(k);
-                                if (target.x <= first.x && target.y <= third.y) {
-                                    int sideA = abs(first.y() - third.y()) ;
-                                    int sideB = abs(first.x() - third.x()) ;
-                                    sizes.add((long) sideA * sideB);
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                }
+              for ( int j = i+1;j < allRedTiles.size() ; j++){
+                  boolean isContainedOne = false;
+                  boolean isContainedTwo = false;
+                  Point first = allRedTiles.get(i);
+                  Point second = allRedTiles.get(j);
+                  if (first.y > second.y ){
+                      for (int k =0; k < allRedTiles.size() && k!=j && k!=i; k++){
+                          Point target = allRedTiles.get(k);
+                          int biggerX = first.x;
+                          int smallerX = second.x;
+                          if (first.x > second.x){
+                              biggerX = second.x;
+                              smallerX = first.x;
+                          }
 
+                          if (target.x<= smallerX && target.y <= second.y ){
+                              isContainedOne = true;
+                          }
+                          if (target.x >= biggerX && target.y >= first.y){
+                              isContainedTwo = true;
+                          }
+                      }
+                  }
+                  if (first.y < second.y){
+                      int biggerX = first.x;
+                      int smallerX = second.x;
+                      if (first.x > second.x){
+                          biggerX = second.x;
+                          smallerX = first.x;
+                      }
+                      for (int k =0; k < allRedTiles.size() && k!=j && k!=i; k++){
+                          Point target = allRedTiles.get(k);
+                          if (target.x>= biggerX && target.y <= first.y ){
+                              isContainedOne = true;
+                          }
+                          if (target.x <= smallerX && target.y >= second.y){
+                              isContainedTwo = true;
+                          }
+                      }
+                  }
+                  if (isContainedOne && isContainedTwo){
+                      int sideA = abs(first.y() - second.y())+1;
+                      int  sideB = abs(first.x() - second.x())+1;
+                      System.out.println(first.x+","+first.y+"..."+second.x +","+second.y);
+                      System.out.println(sideA+","+sideB);
+                      sizes.add((long)sideA*sideB);
+                  }
+            }
         }
 
         return sizes;
