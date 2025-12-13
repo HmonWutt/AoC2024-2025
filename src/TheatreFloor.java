@@ -8,7 +8,7 @@ public class TheatreFloor {
         ArrayList<Point> allRedTiles = new ArrayList<>();
         for (String redTile: redTileCoordinates){
             String[] xy = redTile.split("," );
-            allRedTiles.add(new Point(Integer.parseInt(xy[1]), Integer.parseInt(xy[0]), new HashSet<Point>(), new HashSet<Point>()));
+            allRedTiles.add(new Point(Integer.parseInt(xy[1]), Integer.parseInt(xy[0])));
         }
         return allRedTiles;
     }
@@ -38,17 +38,16 @@ public class TheatreFloor {
               for ( int j = i+1;j < allRedTiles.size() ; j++){
                   boolean isContainedOne = false;
                   boolean isContainedTwo = false;
+                  boolean isNoHole = true;
                   Point first = allRedTiles.get(i);
                   Point second = allRedTiles.get(j);
-
+                  int biggerX = Math.max(first.x, second.x);
+                  int smallerX = Math.min(first.x, second.x);
+                  int biggerY = Math.max(first.y,second.y);
+                  int smallerY = Math.min(first.y,second.y);
                   if (first.y  > second.y && first.x > second.x || second.y > first.y && second.x > first.x){
                       for (int k =0; k < allRedTiles.size() ; k++){
                           Point target = allRedTiles.get(k);
-                          int biggerX = Math.max(first.x, second.x);
-                          int smallerX = Math.min(first.x, second.x);
-                          int biggerY = Math.max(first.y,second.y);
-                          int smallerY = Math.min(first.y,second.y);
-
                           if (target.x >= biggerX && target.y <= smallerY ){
                               isContainedOne = true;
                           }
@@ -58,10 +57,6 @@ public class TheatreFloor {
                       }
                   }
                   else{
-                      int biggerX = Math.max(first.x, second.x);
-                      int smallerX = Math.min(first.x, second.x);
-                      int biggerY = Math.max(first.y,second.y);
-                      int smallerY = Math.min(first.y,second.y);
                       for (int k =0; k < allRedTiles.size() && k!=j && k!=i; k++){
                           Point target = allRedTiles.get(k);
                           if (target.x>= biggerX && target.y >= biggerY ){
@@ -72,15 +67,23 @@ public class TheatreFloor {
                           }
                       }
                   }
-                  System.out.println(first.x+","+first.y+"..."+second.x +","+second.y);
-                  System.out.println(isContainedOne+","+isContainedTwo);
-                  System.out.println();
                   if (isContainedOne && isContainedTwo){
-                      int sideA = abs(first.y() - second.y())+1;
-                      int  sideB = abs(first.x() - second.x())+1;
-                      System.out.println(first.x+","+first.y+"..."+second.x +","+second.y);
-                      System.out.println(sideA+","+sideB);
-                      sizes.add((long)sideA*sideB);
+                      for (int x = smallerX+1; x< biggerX; x++){
+                          for (int y = smallerY+1; y < biggerY; y++){
+                              if (allRedTiles.contains(new Point(x,y))){
+                                  isNoHole =false;
+                                  break;
+                              }
+                          }
+                          if (!isNoHole)break;
+                      }
+                      if (isNoHole) {
+                          int sideA = abs(first.y() - second.y()) + 1;
+                          int sideB = abs(first.x() - second.x()) + 1;
+                          System.out.println(first.x + "," + first.y + "..." + second.x + "," + second.y);
+                          System.out.println(sideA + "," + sideB);
+                          sizes.add((long) sideA * sideB);
+                      }
                   }
             }
         }
@@ -92,5 +95,5 @@ public class TheatreFloor {
         TheatreFloor.findBiggestSquareWithRestraint(input);
     }
 
-    record Point(int x, int y, HashSet<Point> sameX, HashSet<Point> sameY){};
+    record Point(int x, int y){};
 }
