@@ -40,46 +40,46 @@ public class TheatreFloor {
                   boolean isContainedTwo = false;
                   Point first = allRedTiles.get(i);
                   Point second = allRedTiles.get(j);
-                  if (first.y  > second.y ){
-                      for (int k =0; k < allRedTiles.size() && k!=j && k!=i; k++){
-                          Point target = allRedTiles.get(k);
-                          int biggerX = first.x;
-                          int smallerX = second.x;
-                          if (first.x > second.x){
-                              biggerX = second.x;
-                              smallerX = first.x;
-                          }
 
-                          if (target.x<= smallerX && target.y <= second.y ){
+                  if (first.y  > second.y && first.x > second.x || second.y > first.y && second.x > first.x){
+                      for (int k =0; k < allRedTiles.size() ; k++){
+                          Point target = allRedTiles.get(k);
+                          int biggerX = Math.max(first.x, second.x);
+                          int smallerX = Math.min(first.x, second.x);
+                          int biggerY = Math.max(first.y,second.y);
+                          int smallerY = Math.min(first.y,second.y);
+
+                          if (target.x >= biggerX && target.y <= smallerY ){
                               isContainedOne = true;
                           }
-                          if (target.x >= biggerX && target.y >= first.y){
+                          if (target.x <=smallerX && target.y >= biggerY){
                               isContainedTwo = true;
                           }
                       }
                   }
-                  if (first.y < second.y){
-                      int biggerX = first.x;
-                      int smallerX = second.x;
-                      if (first.x > second.x){
-                          biggerX = second.x;
-                          smallerX = first.x;
-                      }
+                  else{
+                      int biggerX = Math.max(first.x, second.x);
+                      int smallerX = Math.min(first.x, second.x);
+                      int biggerY = Math.max(first.y,second.y);
+                      int smallerY = Math.min(first.y,second.y);
                       for (int k =0; k < allRedTiles.size() && k!=j && k!=i; k++){
                           Point target = allRedTiles.get(k);
-                          if (target.x>= biggerX && target.y <= first.y ){
+                          if (target.x>= biggerX && target.y >= biggerY ){
                               isContainedOne = true;
                           }
-                          if (target.x <= smallerX && target.y >= second.y){
+                          if (target.x <= smallerX && target.y <= smallerY){
                               isContainedTwo = true;
                           }
                       }
                   }
+                  System.out.println(first.x+","+first.y+"..."+second.x +","+second.y);
+                  System.out.println(isContainedOne+","+isContainedTwo);
+                  System.out.println();
                   if (isContainedOne && isContainedTwo){
                       int sideA = abs(first.y() - second.y())+1;
                       int  sideB = abs(first.x() - second.x())+1;
-//                      System.out.println(first.x+","+first.y+"..."+second.x +","+second.y);
-//                      System.out.println(sideA+","+sideB);
+                      System.out.println(first.x+","+first.y+"..."+second.x +","+second.y);
+                      System.out.println(sideA+","+sideB);
                       sizes.add((long)sideA*sideB);
                   }
             }
