@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 import java.util.List;
 
-public class Machine {
+public class Config {
     private List<List<Integer>> symbolTo(List<String> symbols){
         List<List<Integer>> list = new ArrayList<>();
          for (String symbolString: symbols){

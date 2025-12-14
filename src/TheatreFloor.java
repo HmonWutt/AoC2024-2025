@@ -33,58 +33,61 @@ public class TheatreFloor {
     private static void findBiggestSquareWithRestraint(ArrayList<String> redTiles){
         ArrayList<Point> allRedTiles = TheatreFloor.mapAllTiles(redTiles);
         PriorityQueue<Long> sizes = new PriorityQueue<>();
-        for (int i =0 ; i < allRedTiles.size(); i ++){
+        ArrayList<HashSet<Integer>> seen = new ArrayList<>();
+        for (int i =0 ; i < allRedTiles.size(); i ++) {
 
-              for ( int j = i+1;j < allRedTiles.size() ; j++){
-                  boolean isContainedOne = false;
-                  boolean isContainedTwo = false;
-                  boolean isNoHole = true;
-                  Point first = allRedTiles.get(i);
-                  Point second = allRedTiles.get(j);
-                  int biggerX = Math.max(first.x, second.x);
-                  int smallerX = Math.min(first.x, second.x);
-                  int biggerY = Math.max(first.y,second.y);
-                  int smallerY = Math.min(first.y,second.y);
-                  if (first.y  > second.y && first.x > second.x || second.y > first.y && second.x > first.x){
-                      for (int k =0; k < allRedTiles.size() ; k++){
-                          Point target = allRedTiles.get(k);
-                          if (target.x >= biggerX && target.y <= smallerY ){
-                              isContainedOne = true;
-                          }
-                          if (target.x <=smallerX && target.y >= biggerY){
-                              isContainedTwo = true;
-                          }
-                      }
-                  }
-                  else{
-                      for (int k =0; k < allRedTiles.size() && k!=j && k!=i; k++){
-                          Point target = allRedTiles.get(k);
-                          if (target.x>= biggerX && target.y >= biggerY ){
-                              isContainedOne = true;
-                          }
-                          if (target.x <= smallerX && target.y <= smallerY){
-                              isContainedTwo = true;
-                          }
-                      }
-                  }
-                  if (isContainedOne && isContainedTwo){
-                      for (int x = smallerX+1; x< biggerX; x++){
-                          for (int y = smallerY+1; y < biggerY; y++){
-                              if (allRedTiles.contains(new Point(x,y))){
-                                  isNoHole =false;
-                                  break;
-                              }
-                          }
-                          if (!isNoHole)break;
-                      }
-                      if (isNoHole) {
-                          int sideA = abs(first.y() - second.y()) + 1;
-                          int sideB = abs(first.x() - second.x()) + 1;
-                          System.out.println(first.x + "," + first.y + "..." + second.x + "," + second.y);
-                          System.out.println(sideA + "," + sideB);
-                          sizes.add((long) sideA * sideB);
-                      }
-                  }
+            for (int j = i + 1; j < allRedTiles.size(); j++) {
+                boolean isContainedOne = false;
+                boolean isContainedTwo = false;
+                boolean isNoHole = true;
+                Point first = allRedTiles.get(i);
+                Point second = allRedTiles.get(j);
+                HashSet<Integer> set = new HashSet<>(List.of(first.x, first.y, second.x, second.y));
+                if (!seen.contains(set)) {
+                    int biggerX = Math.max(first.x, second.x);
+                    int smallerX = Math.min(first.x, second.x);
+                    int biggerY = Math.max(first.y, second.y);
+                    int smallerY = Math.min(first.y, second.y);
+                    if (first.y > second.y && first.x > second.x || second.y > first.y && second.x > first.x) {
+                        for (int k = 0; k < allRedTiles.size(); k++) {
+                            Point target = allRedTiles.get(k);
+                            if (target.x >= biggerX && target.y <= smallerY) {
+                                isContainedOne = true;
+                            }
+                            if (target.x <= smallerX && target.y >= biggerY) {
+                                isContainedTwo = true;
+                            }
+                        }
+                    } else {
+                        for (int k = 0; k < allRedTiles.size() && k != j && k != i; k++) {
+                            Point target = allRedTiles.get(k);
+                            if (target.x >= biggerX && target.y >= biggerY) {
+                                isContainedOne = true;
+                            }
+                            if (target.x <= smallerX && target.y <= smallerY) {
+                                isContainedTwo = true;
+                            }
+                        }
+                    }
+                    if (isContainedOne && isContainedTwo) {
+                        for (int x = smallerX + 1; x < biggerX; x++) {
+                            for (int y = smallerY + 1; y < biggerY; y++) {
+                                if (allRedTiles.contains(new Point(x, y))) {
+                                    isNoHole = false;
+                                    break;
+                                }
+                            }
+                            if (!isNoHole) break;
+                        }
+                        if (isNoHole) {
+                            int sideA = abs(first.y() - second.y()) + 1;
+                            int sideB = abs(first.x() - second.x()) + 1;
+                            System.out.println(first.x + "," + first.y + "..." + second.x + "," + second.y);
+                            System.out.println(sideA + "," + sideB);
+                            sizes.add((long) sideA * sideB);
+                        }
+                    }
+                }
             }
         }
         System.out.println("Day 9 part 2: "+Collections.max(sizes));

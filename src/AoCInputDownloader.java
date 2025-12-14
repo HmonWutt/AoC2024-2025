@@ -16,7 +16,7 @@ public class AoCInputDownloader {
         connection.setRequestProperty("User-Agent", "AoC Java Downloader");
 
         // Set the Cookie header with your session ID
-        connection.setRequestProperty("Cookie", "session=" + SessionCookie.AoC2024);
+        connection.setRequestProperty("Cookie", "session=" + System.getProperty("SessionID"));
 
         // Connect to the URL
         connection.connect();
