@@ -1,8 +1,12 @@
+import java.math.BigInteger;
 import java.util.*;
 
-import static java.lang.Math.abs;
+import static java.lang.Math.*;
 
 public class TheatreFloor {
+    static HashMap<Integer, HashSet<List<Integer>>> rowColList = new HashMap<>();
+    static HashMap<Integer, HashSet<List<Integer>>> colRowList = new HashMap<>();
+    static ArrayList<Point> lines = new ArrayList<>();
 
     public static ArrayList<Point> mapAllTiles(ArrayList<String> redTileCoordinates){
         ArrayList<Point> allRedTiles = new ArrayList<>();
@@ -30,72 +34,85 @@ public class TheatreFloor {
         System.out.println("Day 9 part 1: "+ max);
     }
 
-    private static void findBiggestSquareWithRestraint(ArrayList<String> redTiles){
-        ArrayList<Point> allRedTiles = TheatreFloor.mapAllTiles(redTiles);
-        PriorityQueue<Long> sizes = new PriorityQueue<>();
-        ArrayList<HashSet<Integer>> seen = new ArrayList<>();
-        for (int i =0 ; i < allRedTiles.size(); i ++) {
+    private static HashSet<int[]> getAllValidTiles(ArrayList<String> redTiles) {
+        List<Point> allRedTilesAsPoints = TheatreFloor.mapAllTiles(redTiles);
 
-            for (int j = i + 1; j < allRedTiles.size(); j++) {
-                boolean isContainedOne = false;
-                boolean isContainedTwo = false;
-                boolean isNoHole = true;
-                Point first = allRedTiles.get(i);
-                Point second = allRedTiles.get(j);
-                HashSet<Integer> set = new HashSet<>(List.of(first.x, first.y, second.x, second.y));
-                if (!seen.contains(set)) {
-                    int biggerX = Math.max(first.x, second.x);
-                    int smallerX = Math.min(first.x, second.x);
-                    int biggerY = Math.max(first.y, second.y);
-                    int smallerY = Math.min(first.y, second.y);
-                    if (first.y > second.y && first.x > second.x || second.y > first.y && second.x > first.x) {
-                        for (int k = 0; k < allRedTiles.size(); k++) {
-                            Point target = allRedTiles.get(k);
-                            if (target.x >= biggerX && target.y <= smallerY) {
-                                isContainedOne = true;
-                            }
-                            if (target.x <= smallerX && target.y >= biggerY) {
-                                isContainedTwo = true;
-                            }
-                        }
-                    } else {
-                        for (int k = 0; k < allRedTiles.size() && k != j && k != i; k++) {
-                            Point target = allRedTiles.get(k);
-                            if (target.x >= biggerX && target.y >= biggerY) {
-                                isContainedOne = true;
-                            }
-                            if (target.x <= smallerX && target.y <= smallerY) {
-                                isContainedTwo = true;
-                            }
+        HashSet<int[]> allValidTiles = new HashSet<>();
+        int len = allRedTilesAsPoints.size();
+        for (int i = 0; i < len; i++) {
+            for (int j = i+1; j < len; j++) {
+                    Point first = allRedTilesAsPoints.get(i);
+                    Point second = allRedTilesAsPoints.get(j);
+                    if (first.x == second.x) {
+                        int min = Math.min(first.y, second.y);
+                        int max = Math.max(first.y, second.y);
+                        for (int y= min-1; y<= max; y++) {
+                            allValidTiles.add(new int[]{first.x, y});
                         }
                     }
-                    if (isContainedOne && isContainedTwo) {
-                        for (int x = smallerX + 1; x < biggerX; x++) {
-                            for (int y = smallerY + 1; y < biggerY; y++) {
-                                if (allRedTiles.contains(new Point(x, y))) {
-                                    isNoHole = false;
-                                    break;
-                                }
-                            }
-                            if (!isNoHole) break;
-                        }
-                        if (isNoHole) {
-                            int sideA = abs(first.y() - second.y()) + 1;
-                            int sideB = abs(first.x() - second.x()) + 1;
-                            System.out.println(first.x + "," + first.y + "..." + second.x + "," + second.y);
-                            System.out.println(sideA + "," + sideB);
-                            sizes.add((long) sideA * sideB);
+                    if (first.y == second.y) {
+                        int min = Math.min(first.x, second.x);
+                        int max = Math.max(first.x, second.x);
+                        for (int k = min-1; k <= max; k++) {
+                            allValidTiles.add(new int[]{k, first.y});
                         }
                     }
                 }
             }
-        }
-        System.out.println("Day 9 part 2: "+Collections.max(sizes));
-    }
 
+       return allValidTiles;
+    }
+    private static Map<Integer, List<Integer>> getMinMax (HashSet<int[]> allValidTiles){
+        List <int[]> allValidTilesList = new ArrayList<int[]>(allValidTiles);
+        Map<Integer, List<Integer>> rowCols = new HashMap<>();
+
+        for (int[] tile : allValidTilesList) {
+                rowCols.computeIfAbsent(tile[0], k -> new ArrayList<>())
+                        .add(tile[1]);
+            }
+
+
+        return rowCols;
+    }
+    private static long getBiggestSquare(ArrayList<String> redTiles){
+        ArrayList<Point> allRedTilesAsPoints = TheatreFloor.mapAllTiles(redTiles) ;
+        long sizes = 0L;
+        HashSet<int[]> allValidTils = TheatreFloor.getAllValidTiles(redTiles);
+        Map<Integer,List<Integer>> minMaxes = TheatreFloor.getMinMax(allValidTils);
+        for (int i =0; i < redTiles.size();i+=1 ){
+             for (int j = i+1; j < redTiles.size();j++){
+                 Point first = allRedTilesAsPoints.get(i);
+                 Point second = allRedTilesAsPoints.get(j);
+                 if (first.x != second.x && first.y != second.y){
+                     Point target  = new Point(first.x, second.y);
+                     Point target1 = new Point(second.x, first.y);
+                     boolean isBoundedOne = false;
+                     boolean isBoundedTwo  = false;
+                     List<Integer> minMax = minMaxes.get(target.x);
+                     List<Integer> minMax1 = minMaxes.get(target1.x);
+                     int min1 = Collections.min(minMax);
+                     int min2 = Collections.min(minMax1);
+                     int max1= Collections.max(minMax);
+                     int max2 = Collections.max(minMax1);
+                     if (target.y >= min1 && target.y<=max1) isBoundedOne = true;
+                     if (target1.y >= min2 && target1.y<=max2) isBoundedTwo = true;
+                     if (isBoundedOne & isBoundedTwo){
+                         long sideA = abs(first.y() - second.y()) + 1;
+                         long sideB = abs(first.x() - second.x()) + 1;
+//                         System.out.println("("+first.y+","+first.x+"),("+second.y+","+second.x+")");
+//                         System.out.println(sideA * sideB);
+                         sizes = Math.max(sizes,sideA * sideB);
+                     }
+                 }
+             }
+        }
+        return sizes;
+    }
     public static void run (ArrayList<String> input){
-        TheatreFloor.findBiggestSquareWithoutRestraint(input);
-        TheatreFloor.findBiggestSquareWithRestraint(input);
+//        TheatreFloor.findBiggestSquareWithoutRestraint(input);
+//        TheatreFloor.findBiggestSquareWithRestraint(input);
+        long max = TheatreFloor.getBiggestSquare(input);
+        System.out.println("Biggest squre: "+max);
     }
 
     record Point(int x, int y){};

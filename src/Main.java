@@ -301,7 +301,7 @@ public class Main {
 //        config.splitInputIntoMachineAndButtonsAndJoltage(dayTen);
 
 //        inputDownloader.downloadInput("https://adventofcode.com/2025/day/9/input", "091225");
-        ArrayList<String> dayNine = scanner.loadAsArray("091225");
+        ArrayList<String> dayNine = scanner.loadAsArray("test9");
         TheatreFloor.run(dayNine);
 
     }
