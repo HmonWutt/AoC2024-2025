@@ -46,14 +46,14 @@ public class TheatreFloor {
                     if (first.x == second.x) {
                         int min = Math.min(first.y, second.y);
                         int max = Math.max(first.y, second.y);
-                        for (int y= min-1; y<= max; y++) {
+                        for (int y= min; y<= max; y++) {
                             allValidTiles.add(new int[]{first.x, y});
                         }
                     }
                     if (first.y == second.y) {
                         int min = Math.min(first.x, second.x);
                         int max = Math.max(first.x, second.x);
-                        for (int k = min-1; k <= max; k++) {
+                        for (int k = min; k <= max; k++) {
                             allValidTiles.add(new int[]{k, first.y});
                         }
                     }
@@ -76,6 +76,11 @@ public class TheatreFloor {
     }
     private static long getBiggestSquare(ArrayList<String> redTiles){
         ArrayList<Point> allRedTilesAsPoints = TheatreFloor.mapAllTiles(redTiles) ;
+        allRedTilesAsPoints.sort(Comparator.comparingInt(Point::y));
+        Point longest = allRedTilesAsPoints.getLast();
+        allRedTilesAsPoints.sort(Comparator.comparingInt(Point::y));
+        Point tallest = allRedTilesAsPoints.getLast();
+        System.out.println("Longest: "+longest.x+","+longest.y);
         long sizes = 0L;
         HashSet<int[]> allValidTils = TheatreFloor.getAllValidTiles(redTiles);
         Map<Integer,List<Integer>> minMaxes = TheatreFloor.getMinMax(allValidTils);
@@ -97,11 +102,11 @@ public class TheatreFloor {
                      if (target.y >= min1 && target.y<=max1) isBoundedOne = true;
                      if (target1.y >= min2 && target1.y<=max2) isBoundedTwo = true;
                      if (isBoundedOne & isBoundedTwo){
-                         long sideA = abs(first.y() - second.y()) + 1;
-                         long sideB = abs(first.x() - second.x()) + 1;
-//                         System.out.println("("+first.y+","+first.x+"),("+second.y+","+second.x+")");
-//                         System.out.println(sideA * sideB);
-                         sizes = Math.max(sizes,sideA * sideB);
+                             long sideA = abs(first.y() - second.y()) + 1;
+                             long sideB = abs(first.x() - second.x()) + 1;
+                             System.out.println("(" + first.y + "," + first.x + "),(" + second.y + "," + second.x + ")");
+                             System.out.println(sideA * sideB);
+                             sizes = Math.max(sizes, sideA * sideB);
                      }
                  }
              }
