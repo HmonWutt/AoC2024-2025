@@ -293,16 +293,16 @@ public class Main {
 
 
 //        inputDownloader.downloadInput("https://adventofcode.com/2025/day/11/input", "111225");
-        ArrayList<String> dayEleven = scanner.loadAsArray("test11");
-//        Device device = new Device(dayEleven,"svr");
-
+        ArrayList<String> dayEleven = scanner.loadAsArray("111225");
+        Device device = new Device(dayEleven);
+        Device.run();
         ArrayList<String> dayTen = scanner.loadAsArray("test10");
 //        Config config = new Config();
 //        config.splitInputIntoMachineAndButtonsAndJoltage(dayTen);
 
 //        inputDownloader.downloadInput("https://adventofcode.com/2025/day/9/input", "091225");
-        ArrayList<String> dayNine = scanner.loadAsArray("091225");
-        TheatreFloor.run(dayNine);
+//        ArrayList<String> dayNine = scanner.loadAsArray("091225");
+//        TheatreFloor.run(dayNine);
 
     }
 

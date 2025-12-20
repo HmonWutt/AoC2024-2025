@@ -71,53 +71,47 @@ public class TheatreFloor {
                         .add(tile[1]);
             }
 
-
         return rowCols;
     }
-    private static long getBiggestSquare(ArrayList<String> redTiles){
-        ArrayList<Point> allRedTilesAsPoints = TheatreFloor.mapAllTiles(redTiles) ;
-        allRedTilesAsPoints.sort(Comparator.comparingInt(Point::y));
-        Point longest = allRedTilesAsPoints.getLast();
-        allRedTilesAsPoints.sort(Comparator.comparingInt(Point::y));
-        Point tallest = allRedTilesAsPoints.getLast();
-        System.out.println("Longest: "+longest.x+","+longest.y);
-        long sizes = 0L;
-        HashSet<int[]> allValidTils = TheatreFloor.getAllValidTiles(redTiles);
-        Map<Integer,List<Integer>> minMaxes = TheatreFloor.getMinMax(allValidTils);
-        for (int i =0; i < redTiles.size();i+=1 ){
-             for (int j = i+1; j < redTiles.size();j++){
-                 Point first = allRedTilesAsPoints.get(i);
-                 Point second = allRedTilesAsPoints.get(j);
-                 if (first.x != second.x && first.y != second.y){
-                     Point target  = new Point(first.x, second.y);
-                     Point target1 = new Point(second.x, first.y);
-                     boolean isBoundedOne = false;
-                     boolean isBoundedTwo  = false;
-                     List<Integer> minMax = minMaxes.get(target.x);
-                     List<Integer> minMax1 = minMaxes.get(target1.x);
-                     int min1 = Collections.min(minMax);
-                     int min2 = Collections.min(minMax1);
-                     int max1= Collections.max(minMax);
-                     int max2 = Collections.max(minMax1);
-                     if (target.y >= min1 && target.y<=max1) isBoundedOne = true;
-                     if (target1.y >= min2 && target1.y<=max2) isBoundedTwo = true;
-                     if (isBoundedOne & isBoundedTwo){
-                             long sideA = abs(first.y() - second.y()) + 1;
-                             long sideB = abs(first.x() - second.x()) + 1;
-                             System.out.println("(" + first.y + "," + first.x + "),(" + second.y + "," + second.x + ")");
-                             System.out.println(sideA * sideB);
-                             sizes = Math.max(sizes, sideA * sideB);
-                     }
-                 }
-             }
+    private static void shrink(ArrayList<String> redTiles){
+        List<int[]> coordinates = new ArrayList<>();
+        for (String redTile: redTiles){
+            String[] xy = redTile.split("," );
+            coordinates.add(new int[]{Integer.parseInt(xy[1]), Integer.parseInt(xy[0])});
         }
-        return sizes;
+        HashMap <Integer, Integer> smallXToBig = new HashMap<>();
+        HashMap <Integer, Integer> smallYToBig = new HashMap<>();
+        Set<Integer> xes = new HashSet<>();
+        Set<Integer> yes = new HashSet<>();
+        List<int[]> shrunkCoordinates = new ArrayList<>();
+        for (int[] each: coordinates){
+            xes.add(each[0]);
+            yes.add(each[1]);
+        }
+        int x = 0;
+        for (Integer xBig: xes){
+            smallXToBig.put(xBig,x);
+            x +=1;
+        }
+        int y = 0;
+        for (Integer yBig: yes){
+            smallYToBig.put(yBig,y);
+        }
+        for (int[] each: coordinates){
+            shrunkCoordinates.add(new int[]{smallXToBig.get(each[0]), smallYToBig.get(each[1])});
+        }
+        for (int[]each: shrunkCoordinates){
+            System.out.println(Arrays.toString(each));
+        }
+
     }
     public static void run (ArrayList<String> input){
 //        TheatreFloor.findBiggestSquareWithoutRestraint(input);
 //        TheatreFloor.findBiggestSquareWithRestraint(input);
-        long max = TheatreFloor.getBiggestSquare(input);
-        System.out.println("Biggest squre: "+max);
+//        long max = TheatreFloor.getBiggestSquare(input);
+//        System.out.println("Biggest squre: "+max);
+        TheatreFloor.shrink(input);
+
     }
 
     record Point(int x, int y){};
