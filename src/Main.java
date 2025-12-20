@@ -292,11 +292,14 @@ public class Main {
 //        Jbox.run(dayEight);
 
 
-//        inputDownloader.downloadInput("https://adventofcode.com/2025/day/11/input", "111225");
+        inputDownloader.downloadInput("https://adventofcode.com/2025/day/11/input", "111225");
         ArrayList<String> dayEleven = scanner.loadAsArray("111225");
         Device device = new Device(dayEleven);
         Device.run();
-        ArrayList<String> dayTen = scanner.loadAsArray("test10");
+
+        inputDownloader.downloadInput("https://adventofcode.com/2025/day/12/input", "121225");
+        String dayTen = scanner.keepLineBreaks("121225");
+        Tetris.checkIfShapesFitInArea(dayTen);
 //        Config config = new Config();
 //        config.splitInputIntoMachineAndButtonsAndJoltage(dayTen);
 
