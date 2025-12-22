@@ -292,20 +292,23 @@ public class Main {
 //        Jbox.run(dayEight);
 
 
-        inputDownloader.downloadInput("https://adventofcode.com/2025/day/11/input", "111225");
-        ArrayList<String> dayEleven = scanner.loadAsArray("111225");
-        Device device = new Device(dayEleven);
-        Device.run();
+//        inputDownloader.downloadInput("https://adventofcode.com/2025/day/11/input", "111225");
+//        ArrayList<String> dayEleven = scanner.loadAsArray("111225");
+//        Device device = new Device(dayEleven);
+//        Device.run();
 
-        inputDownloader.downloadInput("https://adventofcode.com/2025/day/12/input", "121225");
-        String dayTen = scanner.keepLineBreaks("121225");
-        Tetris.checkIfShapesFitInArea(dayTen);
+//        inputDownloader.downloadInput("https://adventofcode.com/2025/day/12/input", "121225");
+//        String day12 = scanner.keepLineBreaks("121225");
+//        Tetris.checkIfShapesFitInArea(day12);
 //        Config config = new Config();
 //        config.splitInputIntoMachineAndButtonsAndJoltage(dayTen);
 
 //        inputDownloader.downloadInput("https://adventofcode.com/2025/day/9/input", "091225");
 //        ArrayList<String> dayNine = scanner.loadAsArray("091225");
 //        TheatreFloor.run(dayNine);
+        inputDownloader.downloadInput("https://adventofcode.com/2025/day/10/input", "101225");
+        String dayTen = scanner.keepLineBreaks("101225");
+        Factory.run(dayTen);
 
     }
 
