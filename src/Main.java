@@ -304,11 +304,12 @@ public class Main {
 //        config.splitInputIntoMachineAndButtonsAndJoltage(dayTen);
 
 //        inputDownloader.downloadInput("https://adventofcode.com/2025/day/9/input", "091225");
-//        ArrayList<String> dayNine = scanner.loadAsArray("091225");
-//        TheatreFloor.run(dayNine);
-        inputDownloader.downloadInput("https://adventofcode.com/2025/day/10/input", "101225");
-        String dayTen = scanner.keepLineBreaks("101225");
-        Factory.run(dayTen);
+        ArrayList<String> dayNine = scanner.loadAsArray("091225");
+        TheatreFloor.run(dayNine);
+//        inputDownloader.downloadInput("https://adventofcode.com/2025/day/10/input", "101225");
+//        String dayTen = scanner.keepLineBreaks("101225");
+
+//        Factory.run(dayTen);
 
     }
 
