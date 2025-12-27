@@ -5,20 +5,14 @@ import java.util.stream.Collectors;
 import static java.lang.Math.*;
 
 public class TheatreFloor {
-    static HashMap<Integer, HashSet<List<Integer>>> rowColList = new HashMap<>();
-    static HashMap<Integer, HashSet<List<Integer>>> colRowList = new HashMap<>();
-    static ArrayList<Point> lines = new ArrayList<>();
     static HashMap<Integer,Integer> bigYtoSmall = new HashMap<>();
     static HashMap<Integer,Integer> bigXtoSmall = new HashMap<>();
     static HashMap<Integer,Integer> smallXtoBig = new HashMap<>();
     static HashMap<Integer,Integer> smallYtoBig= new HashMap<>();
     static Map<Integer, List<Integer>> rowColsRange = new HashMap<>();
     static Map<Integer, List<Integer>> colRowsRange= new HashMap<>();
-
     static int xLimit =0;
     static int yLimit = 0;
-
-
 
     public static ArrayList<Point> mapAllTiles(ArrayList<String> redTileCoordinates){
         ArrayList<Point> allRedTiles = new ArrayList<>();
@@ -51,6 +45,7 @@ public class TheatreFloor {
     private static ArrayList<List<Integer>> mapOuterBound(List<int[]> shrunkTiles) {
         HashSet<List<Integer>> outerBound = new HashSet<>();
         int len = shrunkTiles.size();
+        int counter =0;
         for (int i = 0; i < len-1   ; i++) {
                 int[] first = shrunkTiles.get(i);
                 int[] second = shrunkTiles.get(i + 1);
@@ -61,43 +56,55 @@ public class TheatreFloor {
                 if (firstX == secondX) {
                     int min = Math.min(firstY, secondY);
                     int max = Math.max(firstY, secondY);
-                    for (int y = min; y <= max; y++) {
+                    for (int y = min; y <=max; y++) {
                         outerBound.add(new ArrayList<>(List.of(firstX, y)));
                     }
+                    counter++;
 
                 }
                 if (firstY == secondY) {
                     int min = Math.min(firstX, secondX);
                     int max = Math.max(firstX, secondX);
-                    for (int k = min; k <= max; k++) {
+                    for (int k = min; k <=max; k++) {
+                        outerBound.add(new ArrayList<>(List.of(k, firstY)));
+                    }
+                    counter++;
+                }
+                /*******************************find and close the gap*******************************/
+                if (firstX != secondX && secondY!=firstY) {
+                    System.out.println("DId not fit: "+"("+firstX+","+firstY+")"+"("+secondX+","+secondY+")");
+                    int min = Math.min(firstX-1, secondX);
+                    int max = Math.max(firstX-1, secondX);
+                    for (int k = min; k <=max; k++) {
                         outerBound.add(new ArrayList<>(List.of(k, firstY)));
                     }
                 }
             }
-//        int[] first = shrunkTiles.getFirst();
-//        int[] second = shrunkTiles.getLast();
-//        System.out.println(Arrays.toString(first));
-//        System.out.println(Arrays.toString(second));
-//        int firstX = first[0];
-//        int firstY = first[1];
-//        int secondX = second[0];
-//        int secondY = second[1];
-//        if (firstX == secondX) {
-//            int min = Math.min(firstY, secondY);
-//            int max = Math.max(firstY, secondY);
-//            for (int y = min; y <= max; y++) {
-//                outerBound.add(new ArrayList<>(List.of(firstX, y)));
-//            }
-//
-//        }
-//        if (firstY == secondY) {
-//            int min = Math.min(firstX, secondX);
-//            int max = Math.max(firstX, secondX);
-//            for (int k = min; k <= max; k++) {
-//                outerBound.add(new ArrayList<>(List.of(k, firstY)));
-//            }
-//        }
+        int[] first = shrunkTiles.getFirst();
+        int[] second = shrunkTiles.getLast();
+        System.out.println(Arrays.toString(first));
+        System.out.println(Arrays.toString(second));
+        int firstX = first[0];
+        int firstY = first[1];
+        int secondX = second[0];
+        int secondY = second[1];
+        if (firstX == secondX) {
+            int min = Math.min(firstY, secondY);
+            int max = Math.max(firstY, secondY);
+            for (int y = min; y <= max; y++) {
+                outerBound.add(new ArrayList<>(List.of(firstX, y)));
+            }
 
+        }
+        if (firstY == secondY) {
+            int min = Math.min(firstX, secondX);
+            int max = Math.max(firstX, secondX);
+            for (int k = min; k <= max; k++) {
+                outerBound.add(new ArrayList<>(List.of(k, firstY)));
+            }
+        }
+
+        System.out.println("count "+counter);
         System.out.println("xlimit"+xLimit);
         System.out.println("ylimit"+yLimit);
 
@@ -121,20 +128,21 @@ public class TheatreFloor {
             }
 
         }
-        for (int x = 0; x <= xLimit; x++){
+
+        for (int x = 0; x <=xLimit; x++){
             StringBuilder stringBuilder = new StringBuilder();
-            for (int y = 0; y <= yLimit  ; y++){
+            for (int y = 0; y <= yLimit ; y++){
                 if (outside.contains(new ArrayList<>(List.of(x,y)))){
-                    stringBuilder.append("X");
-//                    System.out.println(x+","+y);
-                }
-                else{
                     stringBuilder.append(".");
                 }
+                else{
+                    stringBuilder.append("X");
+                }
+
+//                System.out.println(x+","+y);
             }
             System.out.println(stringBuilder.toString());
         }
-
         return outside;
     }
 //
@@ -165,17 +173,18 @@ public class TheatreFloor {
     }
     private static List<int[]> shrink(ArrayList<String> redTiles){
         List<int[]> coordinates = new ArrayList<>();
+        Set<Integer> xes = new HashSet<>();
+        Set<Integer> yes = new HashSet<>();
         for (String redTile: redTiles){
             String[] xy = redTile.split("," );
             coordinates.add(new int[]{Integer.parseInt(xy[0]), Integer.parseInt(xy[1])});
+            xes.add(Integer.parseInt(xy[0]));
+            yes.add(Integer.parseInt(xy[1]));
+
         }
-        Set<Integer> xes = new HashSet<>();
-        Set<Integer> yes = new HashSet<>();
+
         List<int[]> shrunkCoordinates = new ArrayList<>();
-        for (int[] each: coordinates){
-            xes.add(each[0]);
-            yes.add(each[1]);
-        }
+
         int x = 1;
         List<Integer> xesSorted = new ArrayList<>(xes);
         Collections.sort(xesSorted);
@@ -184,13 +193,13 @@ public class TheatreFloor {
         for (Integer xBig: xesSorted){
             TheatreFloor.bigXtoSmall.put(xBig,x);
             TheatreFloor.smallXtoBig.put(x,xBig);
-            x +=1;
+            x ++;
         }
         int y = 1;
         for (Integer yBig: yesSorted){
             TheatreFloor.bigYtoSmall.put(yBig,y);
             TheatreFloor.smallYtoBig.put(y,yBig);
-            y+=1;
+            y++;
         }
         for (int[]each:coordinates){
             shrunkCoordinates.add(new int[] {bigXtoSmall.get(each[0]),bigYtoSmall.get(each[1])});
