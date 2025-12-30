@@ -9,11 +9,7 @@ public class Factory {
     static String regexSquareBrackets = "\\[([^\\]]+)\\]";
     static String regexCurlyBraces = "\\{([^\\}]+)\\}";
     static String regexBrackets = "\\(([^\\(]+)\\)";
-//    Pattern pattern1 = Pattern.compile(regexCurlyBraces);
-//    Matcher matcher = pattern1.matcher(text);
-//            if (matcher.find()) {
-//        System.out.println(matcher.group());
-//    }
+
     public static void run(String input) {
         String[] inputSplit = input.split("\n");
         int totalButtonPresses = 0;
@@ -35,6 +31,37 @@ public class Factory {
         System.out.println("Total: "+totalButtonPresses);
     }
 
+    public static void solvePartTwo(String input) {
+        String[] inputSplit = input.split("\n");
+        int totalButtonPresses = 0;
+        Pattern pattern1 = Pattern.compile(regexCurlyBraces);
+        Pattern pattern = Pattern.compile(regexBrackets);
+        for (String text : inputSplit) {
+            List<String> buttonSetsString = pattern.matcher(text).results().map(m -> m.group(1)).toList();
+            List<int[]> buttonSets = buttonSetsString.stream()
+                    .map(e -> Arrays.stream(e.split(","))
+                            .mapToInt(Integer::parseInt)
+                            .toArray())
+                    .toList();
+            for (int[]each: buttonSets) System.out.println(Arrays.toString(each));
+            Matcher matcher = pattern1.matcher(text);
+            String joltageString = "";
+            if (matcher.find()) {
+                joltageString+= matcher.group(1);
+            }
+            int[] joltages = Arrays.stream(joltageString.split(",")).mapToInt(Integer::parseInt).toArray();
+            if (buttonSets.size() == joltages.length){
+                List<int[]> matrix = buildMatrix(buttonSets);
+
+                for (int[]each: matrix) System.out.println(Arrays.toString(each));
+                List<int[]> solvedMatrix = solveNiceEquations(0,matrix,joltages );
+                for (int[]each: solvedMatrix) System.out.println(Arrays.toString(each));
+                int total = getNiceEquationsAnswer(solvedMatrix,joltages);
+
+            }
+        }
+
+    }
     private static int countButtonPresses(List<String> target, List<List<String>> buttonSets){
         PriorityQueue<ButtonSetAndPresses> minHeap = new PriorityQueue<>(Comparator.comparingInt(e->e.presses));
         Set<List<String>> seen = new HashSet<>();
@@ -73,6 +100,62 @@ public class Factory {
             }
         }
         return lights;
+    }
+    private static List<int[]> buildMatrix(List<int[]> buttonSets){
+        List<int[]> matrix = new ArrayList<>();
+        for (int k = 0; k < buttonSets.size(); k++){
+            int[] temp = new int[buttonSets.size()];
+            Arrays.fill(temp,0);
+            matrix.add(temp);
+        }
+        for (int j = 0; j < buttonSets.size(); j++) {
+            for (int i = 0; i < buttonSets.size(); i++) {
+                int[] buttonSet = buttonSets.get(i);
+                int target = i;
+                if (Arrays.stream(buttonSet).anyMatch(value -> value== target)){
+                    matrix.get(j)[i]= 1;
+                }
+            }
+        }
+        return matrix;
+    }
+    private static List<int[]> solveNiceEquations(int row, List<int[]> matrix, int[] joltages) {
+        if (row == matrix.size() - 1) return matrix;
+        if (matrix.get(row)[row] != 1) {
+            for (int i = row + 1; i < matrix.size(); i++) {
+                if (matrix.get(i)[row] == 1) {
+                    int[] tempRow = Arrays.copyOf(matrix.get(row), matrix.get(row).length);
+                    matrix.set(row, Arrays.copyOf(matrix.get(i), matrix.get(i).length));
+                    matrix.set(i, tempRow);
+                    int temp = joltages [row];
+                    joltages[row] =  joltages[i];
+                    joltages[i] = temp;
+                }
+            }
+        }
+        for (int i = row + 1; i < matrix.size(); i++) {
+            if (matrix.get(i)[row] == 1) {
+                for (int j= i; j < matrix.size(); j++){
+                    matrix.get(i)[j] = matrix.get(row)[j] - matrix.get(i)[j];
+                }
+                joltages [i] = joltages[row] - joltages[i];
+            }
+        }
+        return solveNiceEquations(row+1, matrix, joltages);
+
+    }
+
+    private static int getNiceEquationsAnswer(List<int[]> solvedMatrix, int[] joltages){
+        int[] answers = new int[joltages.length];
+        for (int i = solvedMatrix.size()-1; i >=0;i--){
+            if (i <= solvedMatrix.size()-1) {
+                for (int j = solvedMatrix.size()-1; j >=0; j--){
+                    joltages[i] -= answers[j];
+                }
+                answers[i] = joltages[i];
+            }
+        }
+        return Arrays.stream(answers).sum();
     }
     record ButtonSetAndPresses(Integer presses, List<String> buttonSet){};
 
